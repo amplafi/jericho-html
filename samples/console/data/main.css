@@ -1,0 +1,10 @@
+body,table,textarea,input {font-family: arial, sans-serif; font-size: 10pt}
+h1     {font-family: arial, sans-serif; font-size: 14pt}
+h2     {font-family: arial, sans-serif; font-size: 12pt; margin-bottom: 0.8em}
+h3     {font-size: 10pt; margin-bottom: 0.5em}
+td,th  {vertical-align: top; padding-right: 1.5em}
+th     {padding-top: 0.5em; padding-bottom: 0.5em}
+th     {text-align: left}
+table  {margin-top: 1em; margin-bottom: 1em}
+.control {width: 100%}
+div.control {border-style: ridge; border-width: 2px; overflow: auto}

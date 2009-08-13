@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Jericho HTML Parser</title>
+		<meta name="author" content="Martin Jericho" />
+		<meta name="content-language" content="en" />
+		<meta name="keywords" content="html,parser,java,library,html form,.NET,DotNet" />
+		<meta name="description" content="Jericho HTML Parser is a java library allowing analysis and manipulation of parts of an HTML document, including server-side tags, while reproducing verbatim any unrecognised or invalid HTML." />
+		<style type="text/css">
+			body,table {font-family: Arial,sans-serif; font-size: 10pt}
+			h1 {font-size: 18pt}
+			h2 {font-size: 14pt}
+			.heading {font-weight: bold; padding-right: 2em}
+			#Samples td {vertical-align: top; padding-bottom: 0.5em}
+			p,ul {margin-bottom: 0.8em; margin-top: 0.8em}
+			li {margin-bottom: 0.5em}
+		</style>
+	</head>
+	<body>
+		<div style="float: right; margin-left: 20px">
+			<a href="http://sourceforge.net/projects/jerichohtml"><img src="images/sflogolocal.png" width="120" height="30" border="0" alt="Jericho HTML Parser at SourceForge.net" /></a>
+		</div>
+		
+		<h1>Jericho HTML Parser</h1>
+		<p>
+			<a href="http://jericho.htmlparser.net/" title="Homepage">Jericho HTML Parser</a> is a java library allowing analysis and manipulation of parts of an HTML document, including server-side tags, while reproducing verbatim any unrecognised or invalid HTML.
+			It also provides high-level HTML form manipulation functions.
+		</p>
+		<p>
+			It is an open source library released under both the
+			<a href="http://www.eclipse.org/legal/epl-v10.html">Eclipse Public License (EPL)</a> and
+			<a href="http://www.gnu.org/copyleft/lesser.html">GNU Lesser General Public License (LGPL)</a>.
+			You are therefore free to use it in commercial applications subject to the terms detailed in either one of these licence documents.
+		</p>
+		<p>
+			The <b><a href="javadoc/index.html">javadocs</a></b> provide comprehensive documentation of the entire API,
+			as well as being a very useful reference on aspects of HTML and XML in general.
+		</p>
+		<p>
+			Visit the SourceForge.net project page at
+			<b><a href="http://sourceforge.net/projects/jerichohtml/">http://sourceforge.net/projects/jerichohtml/</a></b>
+			for <a href="http://sourceforge.net/project/showfiles.php?group_id=101067">downloads</a> and
+			<a href="http://sourceforge.net/forum/forum.php?forum_id=350025">support</a>.
+		</p>
+		<p>You can also rate the project highly at <a href="http://freshmeat.net/projects/jerichohtml/">http://freshmeat.net/projects/jerichohtml/</a></p>
+		<p>
+			Release notes for each version can be found in a file called
+			<a href="../release.txt">release.txt</a> in the project root directory.
+		</p>
+		
+		<h2>Features</h2>
+		<p>The library distinguishes itself from other HTML parsers with the following major features:</p>
+		<ul>
+			<li>
+				The presence of badly formatted HTML does not interfere with the parsing of the rest of the document, which makes the library ideal for use with
+				"real-world" HTML that chokes other parsers.
+			</li>
+			<li>
+				<a href="http://msdn.microsoft.com/asp/">ASP</a>,
+				<a href="http://java.sun.com/products/jsp/">JSP</a>,
+				<a href="http://www.modpython.org/">PSP</a>,
+				<a href="http://www.php.net">PHP</a> and
+				<a href="http://www.masonhq.com/">Mason</a>
+				server tags are explicitly recognised by the parser.
+				This means that normal HTML is still parsed properly even if there are server tags inside them, which is common for example when dynamically setting
+				element attributes.
+			</li>
+			<li>
+				A new stream based parsing option using the <a href="javadoc/net/htmlparser/jericho/StreamedSource.html"><code>StreamedSource</code></a> class,
+				which allows memory efficient processing of large files using an event iterator.  This is essentially a
+				<a target="_blank" href="http://en.wikipedia.org/wiki/StAX">StAX</a> alternative with the ability to process HTML and non-validating XML,
+				as well as several other features not available in other streaming parsers.
+			</li>
+			<li>
+				In its standard form it is neither an <a target="_blank" href="http://www.saxproject.org/event.html">event nor tree based parser</a>, but rather
+				uses a combination of simple text search, efficient tag recognition and a tag position cache.
+				The text of the whole source document is first loaded into memory, and then only the relevant segments searched for the relevant characters
+				of each search operation.
+			</li>
+			<li>
+				Compared to a tree based parser such as <a target="_blank" href="http://www.w3.org/DOM/">DOM</a>,
+				the memory and resource requirements can be far better if only small sections of the document need to be parsed or modified.
+				Incorrect or badly formatted HTML can easily be ignored, unlike tree based parsers which must identify every node in the document from top to bottom.
+			</li>
+			<li>
+				Compared to an event based parser such as <a target="_blank" href="http://www.saxproject.org/">SAX</a>,
+				the interface is on a much higher level and more intuitive, and a tree representation of the
+				<a href="javadoc/net/htmlparser/jericho/Source.html#DocumentElementHierarchy">document element hierarchy</a> is easily created if required.
+			</li>
+			<li>
+				The <a href="javadoc/net/htmlparser/jericho/Segment.html#getBegin()">begin</a> and <a href="javadoc/net/htmlparser/jericho/Segment.html#getEnd()">end</a>
+				positions in the source document of all parsed segments are accessible, allowing modification of only selected segments of the document without having to reconstruct
+				the entire document from a tree.
+			</li>
+			<li>
+				The <a href="javadoc/net/htmlparser/jericho/Source.html#getRowColumnVector(int)">row and column number</a> of each position in the source document are easily accessible.
+			</li>
+			<li>
+				Provides a simple but comprehensive interface for the
+				<a href="javadoc/net/htmlparser/jericho/Segment.html#findFormFields()">analysis and manipulation of HTML form controls</a>,
+				including the <a href="javadoc/net/htmlparser/jericho/FormField.html#getValues()">extraction</a>
+				and <a href="javadoc/net/htmlparser/jericho/FormField.html#setValue(java.lang.CharSequence)">population</a>
+				of initial values, and conversion to <a href="javadoc/net/htmlparser/jericho/FormControl.html#setDisabled(boolean)">read-only</a>
+				or <a href="javadoc/net/htmlparser/jericho/FormControl.html#setOutputStyle(net.htmlparser.jericho.FormControlOutputStyle)">data display</a> modes.
+				Analysis of the form controls also allows data received from the form to be stored and presented
+				in an appropriate manner.
+			</li>
+			<li>
+				Custom tag types can be easily defined and <a href="javadoc/net/htmlparser/jericho/TagType.html#register()">registered</a> for recognition by the parser.
+			</li>
+			<li>
+				Built-in functionality to <a href="javadoc/net/htmlparser/jericho/TextExtractor.html">extract all text from HTML markup</a>, suitable for feeding into a
+				text search engine such as <a target="_blank" href="http://lucene.apache.org/java/">Apache Lucene</a>.
+			</li>
+			<li>
+				Built-in functionality to <a href="javadoc/net/htmlparser/jericho/Renderer.html">render HTML markup</a> with simple text formatting.
+			</li>
+			<li>
+				Built-in functionality to <a href="javadoc/net/htmlparser/jericho/SourceFormatter.html">format HTML source code</a> that indents elements
+				according to their depth in the <a href="javadoc/net/htmlparser/jericho/Source.html#DocumentElementHierarchy">document element hierarchy</a>.
+				(<a target="_blank" href="http://htmlparser.appspot.com/samples/FormatSource.jsp">Click here for an online demonstration</a>)
+			</li>
+			<li>
+				Built-in functionality to <a href="javadoc/net/htmlparser/jericho/SourceCompactor.html">compact HTML source code</a> by removing all unnecessary white space.
+			</li>
+		</ul>
+		
+		<h2>Sample Programs</h2>
+		<p>
+			The <code>samples/console</code> directory in the download package contains sample programs
+			for performing common tasks and demonstrating the functionality of the library.
+			The <code>.bat</code> files can be run directly on a MS-Windows operating system,
+			or the following syntax can be used on a UNIX based operating system from the <code>samples/console</code> directory:
+		</p>
+		<p><code>java -classpath classes;../dist/jericho-html-<i>x.x</i>.jar <i>ProgramName</i></code></p>
+		<p>
+			where <code><i>x.x</i></code> is the current release number and <code><i>ProgramName</i></code>
+			is the name of the sample program to run.
+		</p>
+		<p>The following sample programs are available:</p>
+		<table id="Samples">
+			<tr>
+				<td class="heading"><a href="../samples/console/src/DisplayAllElements.java">DisplayAllElements.java</a></td>
+				<td>
+					Demonstrates the behaviour of the library when retrieving all elements from a document containing
+					a mix of normal HTML, different types of server tags, and badly formatted HTML.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/FindSpecificTags.java">FindSpecificTags.java</a></td>
+				<td>
+					Demonstrates how to search for tags with a specified name, in a specified namespace, or special tags such as
+					<a href="javadoc/net/htmlparser/jericho/StartTagType.html#DOCTYPE_DECLARATION">document type declarations</a>,
+					<a href="javadoc/net/htmlparser/jericho/StartTagType.html#XML_DECLARATION">XML declarations</a>,
+					<a href="javadoc/net/htmlparser/jericho/StartTagType.html#XML_PROCESSING_INSTRUCTION">XML processing instructions</a>,
+					<a href="javadoc/net/htmlparser/jericho/StartTagType.html#SERVER_COMMON">common server tags</a>,
+					<a href="javadoc/net/htmlparser/jericho/PHPTagTypes.html">PHP tags</a>,
+					<a href="javadoc/net/htmlparser/jericho/MasonTagTypes.html">Mason tags</a>, and
+					<a href="javadoc/net/htmlparser/jericho/StartTagType.html#COMMENT">HTML comments</a>.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/ExtractText.java">ExtractText.java</a></td>
+				<td>
+					Demonstrates the use of the <a href="javadoc/net/htmlparser/jericho/TextExtractor.html">TextExtractor</a> class that extracts all of the text from a document,
+					as well as the title, description, keywords and links.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/RenderToText.java">RenderToText.java</a></td>
+				<td>
+					Demonstrates the use of the <a href="javadoc/net/htmlparser/jericho/Renderer.html">Renderer</a>
+					class that performs a simple text rendering of HTML markup, similar to the way Mozilla Thunderbird
+					and other email clients provide an automatic conversion of HTML content to text in their alternative MIME encoding of emails.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/HTMLSanitiser.java">HTMLSanitiser.java</a></td>
+				<td>
+					Demonstrates how to sanitise HTML containing unwanted or invalid tags into clean HTML.
+					The unit test class for this functionality is available <a href="../test/src/samples/HTMLSanitiserTest.java">here</a>.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/StreamedSourceCopy.java">StreamedSourceCopy.java</a></td>
+				<td>
+					Demonstrates the use of the <a href="javadoc/net/htmlparser/jericho/StreamedSource.html">StreamedSource</a> class by iterating through the parsed segments
+					of a source document and creating an exact copy of it.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/FormControlDisplayCharacteristics.java">FormControlDisplayCharacteristics.java</a></td>
+				<td>
+					Demonstrates setting the
+					<a href="javadoc/net/htmlparser/jericho/FormControl.html#DisplayCharacteristics">display characteristics</a>
+					of individual form controls.  This allows a control to be
+					<a href="javadoc/net/htmlparser/jericho/FormControl.html#setDisabled(boolean)">disabled</a>,
+					<a href="javadoc/net/htmlparser/jericho/FormControlOutputStyle.html#REMOVE">removed</a>,
+					or replaced with a plain text representation of its value
+					(<a href="javadoc/net/htmlparser/jericho/FormControlOutputStyle.html#DISPLAY_VALUE">display value</a>).
+					The new document is written to a file called NewForm.html
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/FormFieldCSVOutput.java">FormFieldCSVOutput.java</a></td>
+				<td>
+					Demonstrates the use of the
+					<code><a href="javadoc/net/htmlparser/jericho/FormFields.html#getColumnValues(java.util.Map)">FormFields.getColumnValues(Map)</a></code>
+					method to store form data in a <code>.CSV</code> file, automatically creating separate columns for fields that can
+					contain multiple values (such as checkboxes).
+					The output is written to a file called FormData.csv
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/FormFieldList.java">FormFieldList.java</a></td>
+				<td>
+					Demonstrates the use of the
+					<code><a href="javadoc/net/htmlparser/jericho/Segment.html#findFormFields()">Segment.findFormFields()</a></code>
+					method to list all form fields and their associated controls in a document.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/FormFieldSetValues.java">FormFieldSetValues.java</a></td>
+				<td>
+					Demonstrates setting the values of form controls, which is best done via the
+					<code><a href="javadoc/net/htmlparser/jericho/FormFields.html">FormFields</a></code> object.
+					The new document is written to a file called NewForm.html
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/FormatSource.java">FormatSource.java</a></td>
+				<td>
+					Demonstrates the use of the <a href="javadoc/net/htmlparser/jericho/SourceFormatter.html">SourceFormatter</a>
+					class that formats HTML source by laying out each non-inline-level element on a new line with an appropriate indent.
+					Also known as a "source beautifier".
+					(<a target="_blank" href="http://htmlparser.appspot.com/samples/FormatSource.jsp">Click here for an online demonstration</a>)
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/CompactSource.java">CompactSource.java</a></td>
+				<td>
+					Demonstrates the use of the <a href="javadoc/net/htmlparser/jericho/SourceCompactor.html">SourceCompactor</a>
+					class that compacts HTML source by removing all unnecessary white space.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/Encoding.java">Encoding.java</a></td>
+				<td>
+					Demonstrates the use of the EncodingDetector class and how to determine the encoding of a source document.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/SplitLongLines.java">SplitLongLines.java</a></td>
+				<td>
+					Demonstrates how to reformat a document so that lines exceeding a certain number of characters are split
+					into multiple lines.
+				</td>
+			</tr>
+			<tr>
+				<td class="heading"><a href="../samples/console/src/ConvertStyleSheets.java">ConvertStyleSheets.java</a></td>
+				<td>
+					Demonstrates how to detect all external style sheets and place them inline into the document.
+				</td>
+			</tr>
+		</table>
+		
+		<h2>Building</h2>
+		<p>
+			The build and sample files are implemented as DOS .bat files only, sorry to all the unix users for the inconvenience.
+		</p>
+		
+		<h2>On the Drawing Board...</h2>
+		<ul>
+			<li>Ability to generate a <a target="_blank" href="http://www.jdom.org/">JDOM</a> document, making it a JTidy alternative</li>
+			<li>.NET (DotNet) version if enough interest shown (register your interest via the forums)</li>
+		</ul>
+		
+		<h2>Alternative HTML Parsers</h2>
+		<p>
+			This package was originally written in the latter half of 2002.  At that time I evaluated 6 other parsers,
+			none of which were capable of achieving my aims.  Most couldn't reproduce a typical HTML document without change,
+			none could reproduce a source document containing badly formatted or non-HTML components without change,
+			and none provided a means to track the positions of nodes in the source text.
+			A list of these parsers and a brief description follows, but please note that I have not revised this
+			analysis since the before this package was written.
+			Please let me know if there are any errors.
+		</p>
+		<ul>
+			<li>
+				JavaCC HTML Parser by Quiotix Corporation (<a href="http://www.quiotix.com/downloads/html-parser/">http://www.quiotix.com/downloads/html-parser/</a>)<br />
+				GNU GPL licence, expensive licence fee to use in commercial application.
+				Does not support document structure (parses into a flat node stream).
+			</li>
+			<li>
+				Demonstrational HTML 3.2 parser bundled with JavaCC.  Virtually useless.
+			</li>
+			<li>
+				JTidy (<a href="http://jtidy.sourceforge.net/">http://jtidy.sourceforge.net/</a>)<br />
+				Supports document structure, but by its very nature it "tidies" up anything it doesn't like in the source document.
+				On first glance it looks like the positions of nodes in the source are accessible, at least in protected start and end fields in the Node class, but these are pointers into a different buffer and are of no use.
+			</li>
+			<li>
+				javax.swing.text.html.parser.Parser<br />
+				Comes standard in the JDK.
+				Supports document structure.
+				Does not track the positions of nodes in the source text, but can be easily modified to do so (although not sure of legal implications of modifications).
+				Requires a DTD to function, but only comes with HTML3.2 DTD which is unsuitable.
+				Even if an HTML 4.01 DTD were found, the parser itself might need tweaking to cater for the new element types.
+				The DTD needs to be in the format of a "bdtd" file, which is a binary format used only by Sun in this parser implementation.
+				I have found many requests for a 4.01 bdtd file in newsgroups etc on the web, but they all reamain unanswered.
+				Building it from scratch is not so easy.
+			</li>
+			<li>
+				Kizna HTML Parser v1.1 (<a href="http://htmlparser.sourceforge.net/">http://htmlparser.sourceforge.net/</a>)<br />
+				GNU LGPL licence.  Version 1.1 was very simple without support for document structure.
+				I have since revisited this project at sourceforge (early 2004), where version 1.4 is now available.
+				There are now two separate libraries, one with and one without document structure support.
+				It claims to now also be capable of reproducing source text verbatim.
+			</li>
+			<li>
+				CyberNeko HTML Parser (<a href="http://www.apache.org/~andyc/neko/doc/html/index.html">http://www.apache.org/~andyc/neko/doc/html/index.html</a>)<br />
+				Apache-style licence.  Supports document structure.  Based on the very popular Xerces XML parser.
+				At the time of evaluation this parser didn't regenerate the source accurately enough.
+			</li>
+		</ul>
+		<table style="float: right">
+			<tr><td>Sponsors:</td></tr>
+			<tr><td><a target="_blank" href="http://www.corporatetranslations.com.au/">Corporate Translations</a></td></tr>
+			<tr><td><a target="_blank" href="http://www.takingcareoftrees.com.au/">Taking Care of Trees</a></td></tr>
+		</table>
+		<div style="margin-top: 20px">
+			<a href="http://sourceforge.net/projects/jerichohtml"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=101067&type=11" width="120" height="30" border="0" alt="Jericho HTML Parser at SourceForge.net" /></a>
+		</div>
+	</body>
+</html>

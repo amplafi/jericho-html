@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+  <title>Personal Details</title>
+  <meta name="content-language" content="en" />
+  <link rel="stylesheet" type="text/css" href="main.css" />
+ </head>
+ <body>
+  <h1>Personal Details</h1>
+  <form name="MyForm" action="/servlet/YourResponseRecorder" method="post">
+   <input class="control" type="hidden" name="AuthenticationCode" value="pW5va9LGfxtYJ">
+   <table>
+    <tr>
+     <td>Name:</td>
+     <td><input class="control" name="Name" size="40"></td>
+    </tr>
+    <tr>
+     <td>Title:</td>
+     <td>
+      <select class="control" name="Title" size="1">
+       <option value="none" selected>Please select...</option>
+       <option>Lord</option>
+       <option>Lt General Sir</option>
+       <option>Major General</option>
+       <option>Professor</option>
+       <option>Rt Honourable</option>
+       <option>Prime Minister</option>
+       <option>Master &amp; Commander</option>
+       <option>Grand Poobah</option>
+      </select>
+     </td>
+    </tr>
+    <tr>
+     <td>Email Address:</td>
+     <td><input class="control" type="text" name="Email" size="40" /></td>
+    </tr>
+    <tr>
+     <td>Password:</td>
+     <td><input class="control" type="password" name="Password" size="40" value="secret"/></td>
+    </tr>
+    <tr>
+     <td>Member:</td>
+     <td><input type="checkbox" name="Member" checked /></td>
+    </tr>
+    <tr>
+     <td>Address:</td>
+     <td><textarea class="control" name="Address" rows="4" cols="45"></textarea></td>
+    </tr>
+    <tr>
+     <td>Mailing List Subscriptions:</td>
+     <td>
+      <input type="checkbox" name="MailingList" value="A"> Announcements<br>
+      <input type="checkbox" name="MailingList" value="B"> General<br>
+      <input type="checkbox" name="MailingList" value="C"> Cheap Viagra Offers<br>
+      <input type="checkbox" name="MailingList" value="D"> Anatomical Enlargements
+     </td>
+    </tr>
+    <tr>
+     <td>Favourite Fare:</td>
+     <td>
+      <input type="radio" name="FavouriteFare" value="spam" checked="checked" /> Spam
+      <input type="radio" name="FavouriteFare" value="rhubarb" /> Rhubarb
+      <input type="radio" name="FavouriteFare" value="honey" /> Honey
+      <input type="radio" name="FavouriteFare" value="rum" /> Rum
+     </td>
+    </tr>
+    <tr>
+     <td>Favourite Sports:</td>
+     <td>
+      <select class="control" name="FavouriteSports" multiple>
+       <option value="BB">Baseball
+       <option value="CR">Cricket
+       <option value="AFL">AFL
+       <option value="SOC">Soccer
+      </select>
+      <div class="instructions">(hold down CTRL key to select multiple items)</div>
+     </td>
+    </tr>
+   </table>
+   <p><input type="submit" value="Submit Form" name="button1"/></p>
+  </form>
+ </body>
+</html>

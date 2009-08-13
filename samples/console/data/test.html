@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<%@ page language="java" %><%@ taglib uri="/WEB-INF/struts-i18n.tld" prefix="i18n" %>
+<?xml-stylesheet href="standardstyle.css" title="Standard Stylesheet" type="text/css"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" [
+ <!ELEMENT greeting (#PCDATA)>
+ <!ENTITY p CDATA "<p>">
+]>
+<HTML>
+<HEAD>
+ <META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+ <title>Jericho HTML Parser Test Document</title>
+ <meta name="DESCRIPTION" content="Document containing many elements with optional end tags, server-side tags and some common illegal HTML constructs to demonstrate how they are interpreted by the parser." />
+ <meta name="keywords" content="HTML parser,test document,R&amp;D" />
+<BODY>
+<H2>Test HTML Document</H2>
+<P style="background-color: #e0e0e0">This document contains many elements with optional end tags, server-side tags and some
+ common illegal HTML constructs to demonstrate how they are interpreted by the parser.
+ <br><br>
+ <table border="1" summary="This table demonstrates various aspects of the parser's behaviour in relation to the TABLE element">
+  <caption>Table Example</caption>
+  <tr><th>First Column<th>Second Column
+  <tr>
+   <td><p>Cell 1</p>
+   <td>
+    <table border="2"><tbody>
+     <tr><td>This is a table within the table</tr>
+     <tr><td>Second row of inner table</td>
+     <tr><td>Third row of inner table
+    </table>
+ </table>
+ <br>
+ Note that the parser does not consider this text to be a part of the paragraph started before the table
+ because according to the HTML specification a TABLE, being a block-level element, must terminate the P element.
+ See the documentation in HTMLElementName.P for more information, including instructions on how to make this parser compatible
+ with the default behaviour of all major browsers in HTML transitional mode.
+</p>
+<hr>
+<p>The following text demonstrates the use of a CDATA section which has limited browser compatability</p>
+<![CDATA[
+ <an> example of <sgml> markup that is not <painful> to write with < and such.
+]]>
+<hr>
+<select class="control" name="FavouriteSports" multiple><option value="BB">Baseball<option value="CR">Cricket<option value="AFL">AFL<option value="SOC">Soccer</select>
+<pre>This is <b>preformatted</b> text
+whose formatting should not be altered.</pre>
+<script language="javascript" type="text/javascript">   
+ document.writeln("<p>This paragraph is written using client side script.");
+ document.writeln("The P element is only ignored by the parser if a full sequential parse is performed, which ignores any non-server tags inside SCRIPT elements.</p>");
+</script>
+<script language="javascript" type="text/javascript">
+ //<![CDATA[
+  document.writeln("<p>This P element is ignored by the parser in parse-on-demand mode because of the enclosing CDATA section.</p>");
+  document.writeln("<p>Both the P element and the CDATA section are ignored by the parser during a full sequental parse, which automatically treats script element content as CDATA.</p>");
+ //]]>
+</script>
+<p>
+ This paragraph contains a comment.
+ <!-- <p>This paragraph is commented out</p> -->
+ This text is a continuation of the paragraph before the one that is commented out.
+<ul>
+ <li>item 1
+ <li>item 2
+  <ul>
+   <li>subitem 1</li>
+   <li>subitem 2
+  </ul>
+ <li>item 3</li>
+ <li>item 4
+  <OL>
+   <LI>Ordered list within an unordered list
+   <LI>Second item of ordered list
+  </ol>
+  <p>paragraph <i>within a list item</i>
+</ul>
+<P>This text <u>contains <b>incorrectly<i> nested</u> formatting tags</b> which is
+<P>quite commonly generated</i> by HTML editors.
+<p>This section demonstrates the consequences of illegally nesting block-level elements
+ inside inline-level elements, which is a very common situation caused by the misuse
+ of FONT elements by <FONT face=Arial size=2>HTML editors.
+<p style="background-color: #e0e0e0">This paragraph starts inside
+ the Arial FONT element.</FONT> This text occurs after the Arial FONT end tag, but is still considered to be part of the same paragraph.
+</p>
+<font face=Arial size=2><ul><li>This entire list is surrounded<li>by an Arial font element.</ul></font>
+<a name="TagInsideTag"></a>
+<h2
+ title="This tooltip contains
+a line feed">Limitations when dealing with tags located inside other tags</h2>
+<p>
+ This section demonstrates the limitation of the library in distinguishing whether a tag is located inside another tag without a full sequential parse.
+ When a full sequential parse hasn't been performed, the H2 element in the following button's onclick attribute erroneously
+ terminates the current paragraph, and is also returned by tag search methods.
+ See parsing rule 2(i) in the documentation of the <code>Tag</code> class for an explanation.<br/>
+ <input type="button" value="Click here to execute script" title="simply writes some text using document.write"
+  onclick="document.write('<h2>This element is defined inside an onclick attribute</h2>')"/>
+</p>
+<p>This <a href=http://www.htmlparser.net/>anchor element</a> demonstrates that a tag ending in <code>/&gt;</code>
+is not considered an empty element tag if it has a name that requires an end tag.  In this case the final '/' is included
+in the href attribute value instead of being interpreted as the end of the tag.
+<p style="background-color: #e0e0e0" />The same goes for tags that have an optional end tag like this paragraph,
+which has a grey background despite the fact that the p element is syntactically an empty element tag.</p>
+<!--
+ Here are some tests for tags inside a comment:
+ <h2>heading</h2> - not recognised.
+ <% server tag %> - is recognised.
+ <?target processing instruction?> - not recognised, unless the PHPTagTypes.PHP_SHORT tag type has been registered.
+-->
+
+<h2>Microsoft Conditional Comments</h2>
+<!--[if IE]><p>This paragraph is inside a <b>downlevel-hidden conditional comment</b> which only appears in IE as it evaluates the content inside a valid HTML comment.</p><![endif]-->
+<![if !IE]><p>This paragraph is inside a <b><u>non-validating</u> downlevel-revealed conditional comment</b> which only appears in browsers other than IE because they ignore the invalid tags surrounding it.</p><![endif]>
+<!--[if !(IE 5)]><!--><p>This is an example of a <b><u>validating</u> downlevel-revealed conditional comment</b>, which hides the invalid conditional tags inside HTML comments.  This form must be used if the condition can be true in some IE browsers.</p><!--<![endif]-->
+<!--[if !IE]>--><p>This is an example of a slightly simplified validating downlevel-revealed conditional comment that can be used only for the condition !IE (to display in any browser except IE).</p><!--<![endif]-->
+<!--[if IE]><p>This demonstrates <![if IE 7]>the use of<![endif]> <b>nested</b> downlevel-hidden conditional comments.</p><![endif]-->
+<!--[if !(IE 5)]><!--><p>This demonstrates <!--[true]><!-->the use of<!--<![endif]--> <b>nested</b> downlevel-revealed conditional comments.</p><!--<![endif]-->
+
+<h2>Microsoft pseudo-HTML generated by Word</h2>
+<p class=MsoNormal><span lang=EN-AU style='font-size:10.0pt;font-family:Arial'>This
+section was generated by MS-Word and contains messy and invalid HTML.<b
+style='mso-bidi-font-weight:normal'><br style='mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
+<![endif]></b><o:p></o:p></span></p>
+<p class=MsoNormal><span lang=EN-AU style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+
+<h2>Server Tag Examples:</h2>
+<?php echo '<p>This paragraph is ignored during a full sequential parse</p>'; ?>
+<script language="php">echo 'some editors (like FrontPage) don\'t like processing instructions';</script>
+<?= $variable ?>
+<%= $variable %>
+<%=var%>
+<%abc=def%>
+<%
+	for (int i=0; i<10; i++) {
+		document.write("This is indented server code");
+	}
+%>
+<%@ include file="relativeFragment.jsp" %>
+<jsp:include page='<%= request.getParameter("incFile") %>' />
+<!--#include file="relativeFragment.aspx"-->
+<p id="<%= $DynamicID %>">This paragraph has a dynamic id attribute</p>
+<p>These checkboxes have dynamic code determining whether they are checked:
+<input type="checkbox" <% if (checked) { %>checked="checked"<% } %>/>
+<input type="checkbox" <% if (checked) out.write("checked=\"checked\""); %>/>
+</p>
+<?word document="test.doc" comment="this is a processing instruction with the PITarget 'word'" ?>
+<p>The following is Mason server code sampled from the <a target="_blank" href="http://www.masonbook.com/book/chapter-2.mhtml#CHP-2-SECT-3.4.9">Mason book, chapter 2, section 3.4.9</a>:
+<p>
+<& menu &>
+
+<&| /i18n/itext, lang => $lang &>
+%# The bits in here will be available from $m->content in the /i18/text
+ <en>Hello, <% $name %>.  These words are in English.</en>
+ <fr>Bonjour, <% $name %>, ces mots sont franE<#xC3>E<#xA7>ais.</fr>
+ <pig>Ellohay <% substr($name,2) . substr($name,0,1) . 'ay' %>,
+  esethay ordsway areyay inyay Igpay Atinlay.</pig>
+</&>
+
+<%def .make_a_link>
+ <a target="_blank" href="<% $url %>"><% $text %></a>
+ <%args>
+  $path
+  %query => ( )
+  $text
+ </%args>
+ <%init>
+    my $url = ...
+     ...
+ </%init>
+</%def>
+
+<*abc def="ghi">
+ This is an example of an element from a hypothetical server language 
+ whose tag formats have not been registered with the TagTypeRegister class 
+</*abc>
+</html>
