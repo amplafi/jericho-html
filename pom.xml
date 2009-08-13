@@ -17,7 +17,7 @@
     <build>
         <defaultGoal>deploy</defaultGoal>
         <sourceDirectory>src/java</sourceDirectory>
-        <testSourceDirectory>test/java</testSourceDirectory>
+        <testSourceDirectory>test/src</testSourceDirectory>
         <testResources>
             <!-- need to explicitly reinclude the default directory -->
             <testResource>
@@ -33,6 +33,14 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>        
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
@@ -43,31 +51,52 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+               <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar</goal>
+                            <goal>test-jar</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <uniqueVersion>false</uniqueVersion>
+                </configuration>
             </plugin>
         </plugins>
     </build>
     <dependencies>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging-api</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
+            <version>1.2.15</version>
+            <exclusions>
+                <!-- dependencies show up in 1.2.15 -->
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>      
+            </exclusions>                   
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -78,6 +107,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>1.5.6</version>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <repository>
+            <id>amplafi.public</id>
+            <url>ftp://amplafi.com/httpdocs/repository</url>
+        </repository>
+    </distributionManagement>    
 </project>
