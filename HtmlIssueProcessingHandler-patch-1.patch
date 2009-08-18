@@ -1,0 +1,378 @@
+Index: src/java/net/htmlparser/jericho/Attribute.java
+===================================================================
+--- src/java/net/htmlparser/jericho/Attribute.java	(revision 26)
++++ src/java/net/htmlparser/jericho/Attribute.java	(working copy)
+@@ -27,7 +27,7 @@
+  * name/value segment within a {@link StartTag}.
+  * <p>
+  * An instance of this class is a representation of a single attribute in the source document and is not modifiable.
+- * The {@link OutputDocument#replace(Attributes, Map)} and {@link OutputDocument#replace(Attributes, boolean convertNamesToLowerCase)} methods
++ * The {@link OutputDocument#replace(Attributes, java.util.Map)} and {@link OutputDocument#replace(Attributes, boolean)} methods
+  * provide the means to add, delete or modify attributes and their values in an {@link OutputDocument}.
+  * <p>
+  * Obtained using the {@link Attributes#get(String key)} method.
+Index: src/java/net/htmlparser/jericho/Attributes.java
+===================================================================
+--- src/java/net/htmlparser/jericho/Attributes.java	(revision 26)
++++ src/java/net/htmlparser/jericho/Attributes.java	(working copy)
+@@ -283,14 +283,14 @@
+ 
+ 	private static boolean reachedMaxErrorCount(final int errorCount, final Source source, final String logType, final String tagName, final int logBegin, final int maxErrorCount) {
+ 		if (errorCount<=maxErrorCount) return false;
+-		if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"rejected because it contains too many errors");
++		log(source,logType,tagName,logBegin,"rejected because it contains too many errors");
+ 		return true;
+ 	}
+ 
+ 	private static boolean isInvalidEmptyElementTag(final StartTagType startTagType, final Source source, final int i, final String logType, final String tagName, final int logBegin) {
+ 		// This checks whether we've found the characters "/>" but it wasn't recognised as the closing delimiter because isClosingSlashIgnored is true.
+ 		if (startTagType!=StartTagType.NORMAL || !startTagType.atEndOfAttributes(source,i,false)) return false;
+-		if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"contains a '/' character before the closing '>', which is ignored because tags of this name cannot be empty-element tags");
++		log(source,logType,tagName,logBegin,"contains a '/' character before the closing '>', which is ignored because tags of this name cannot be empty-element tags");
+ 		return true;
+ 	}
+ 
+@@ -524,10 +524,13 @@
+ 	}
+ 	
+ 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3, final int pos) {
+-		source.logger.info(source.getRowColumnVector(pos).appendTo(source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append(part1).append(' ').append(part2).append(" at ")).append(' ').append(part3).append(" at position ")).toString());
++	    // TODO
++		source.logger.info(source.getRowColumnVector(pos).appendTo(
++		    source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append(part1).append(' ').append(part2).append(" at "))
++		    .append(' ').append(part3).append(" at position ")).toString());
+ 	}
+ 
+ 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3) {
+-		source.logger.info(source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append(part1).append(' ').append(part2).append(" at ")).append(' ').append(part3).toString());
++		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin), part1+' '+part2, ' '+part3));
+ 	}
+ }
+Index: src/java/net/htmlparser/jericho/DefaultHtmlProcessingHandler.java
+===================================================================
+--- src/java/net/htmlparser/jericho/DefaultHtmlProcessingHandler.java	(revision 0)
++++ src/java/net/htmlparser/jericho/DefaultHtmlProcessingHandler.java	(revision 0)
+@@ -0,0 +1,22 @@
++package net.htmlparser.jericho;
++
++/**
++ * @author patmoore
++ *
++ */
++public class DefaultHtmlProcessingHandler implements HtmlIssueProcessingHandler {
++    private Source source;
++    public DefaultHtmlProcessingHandler(Source source) {
++        this.source = source;
++    }
++    /**
++     * notifies of html issue. Logged at the info level.
++     * Allows detection of html issues.
++     */
++    @Override
++    public void htmlIssue(HtmlIssue htmlIssue) {
++        if (source.getLogger().isInfoEnabled()) {
++            source.getLogger().info(htmlIssue.toString());
++        }
++    }
++}
+Index: src/java/net/htmlparser/jericho/Element.java
+===================================================================
+--- src/java/net/htmlparser/jericho/Element.java	(revision 26)
++++ src/java/net/htmlparser/jericho/Element.java	(working copy)
+@@ -326,7 +326,7 @@
+ 					}
+ 					final Element childElement=childStartTag.getElement();
+ 					if (childElement.end>end) {
+-						if (source.logger.isInfoEnabled()) source.logger.info("Child "+childElement.getDebugInfo()+" extends beyond end of parent "+getDebugInfo());
++						source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(null, "Child "+childElement.getDebugInfo(), " extends beyond end of parent "+getDebugInfo()));
+ 						if (!INCLUDE_INCORRECTLY_NESTED_CHILDREN_IN_HIERARCHY) {
+ 							pos=childElement.end; 
+ 							continue; 
+Index: src/java/net/htmlparser/jericho/EndTagTypeGenericImplementation.java
+===================================================================
+--- src/java/net/htmlparser/jericho/EndTagTypeGenericImplementation.java	(revision 26)
++++ src/java/net/htmlparser/jericho/EndTagTypeGenericImplementation.java	(working copy)
+@@ -144,7 +144,7 @@
+ 		if (isStatic()) {
+ 			name=getNamePrefix();
+ 			if (!parseText.containsAt(getClosingDelimiter(),startDelimiterEnd)) {
+-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(pos).appendTo(new StringBuilder(200).append("EndTag of expected format ").append(staticString).append(" at ")).append(" not recognised as type '").append(getDescription()).append("' because it is missing the closing delimiter").toString());
++				source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos), name+": EndTag of expected format "+staticString," not recognised as type '"+getDescription()+"' because it is missing the closing delimiter"));
+ 				return null;
+ 			}
+ 			end=startDelimiterEnd+getClosingDelimiter().length();
+@@ -155,7 +155,7 @@
+ 			int expectedClosingDelimiterPos=nameEnd;
+ 			while (Segment.isWhiteSpace(parseText.charAt(expectedClosingDelimiterPos))) expectedClosingDelimiterPos++;
+ 			if (!parseText.containsAt(getClosingDelimiter(),expectedClosingDelimiterPos)) {
+-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(pos).appendTo(new StringBuilder(200).append("EndTag ").append(name).append(" at ")).append(" not recognised as type '").append(getDescription()).append("' because its name and closing delimiter are separated by characters other than white space").toString());
++			    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos), "EndTag "+name, " not recognised as type '"+getDescription()+"' because its name and closing delimiter are separated by characters other than white space"));
+ 				return null;
+ 			}
+ 			end=expectedClosingDelimiterPos+getClosingDelimiter().length();
+Index: src/java/net/htmlparser/jericho/EndTagTypeUnregistered.java
+===================================================================
+--- src/java/net/htmlparser/jericho/EndTagTypeUnregistered.java	(revision 26)
++++ src/java/net/htmlparser/jericho/EndTagTypeUnregistered.java	(working copy)
+@@ -33,7 +33,7 @@
+ 		final int nameEnd=parseText.indexOf(getClosingDelimiter(),nameBegin);
+ 		final String name=source.getName(nameBegin,nameEnd); // throws IndexOutOfBoundsException if nameEnd==-1
+ 		final EndTag endTag=constructEndTag(source,pos,nameEnd+getClosingDelimiter().length(),name);
+-		if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(pos).appendTo(new StringBuilder(200).append("Encountered possible EndTag at ")).append(" whose content does not match a registered EndTagType").toString());
++		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos), name+" Encountered possible EndTag", " whose content does not match a registered EndTagType"));
+ 		return endTag;
+ 	}
+ }
+Index: src/java/net/htmlparser/jericho/FormControl.java
+===================================================================
+--- src/java/net/htmlparser/jericho/FormControl.java	(revision 26)
++++ src/java/net/htmlparser/jericho/FormControl.java	(working copy)
+@@ -85,7 +85,7 @@
+ 			FormControlType formControlType=FormControlType.getFromInputElementType(typeAttributeValue);
+ 			if (formControlType==null) {
+ 				if (formControlType.isNonFormControl(typeAttributeValue)) return null;
+-				if (element.source.logger.isInfoEnabled()) element.source.logger.info(element.source.getRowColumnVector(element.begin).appendTo(new StringBuilder(200)).append(": INPUT control with unrecognised type \"").append(typeAttributeValue).append("\" assumed to be type \"text\"").toString());
++				element.source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(element.source.getRowColumnVector(element.begin), "", "INPUT control with unrecognised type \""+typeAttributeValue+"\" assumed to be type \"text\""));
+ 				formControlType=FormControlType.TEXT;
+ 			}
+ 			switch (formControlType) {
+@@ -610,7 +610,7 @@
+ 			super(element,formControlType,true);
+ 			if (elementContainer.predefinedValue==null) {
+ 				elementContainer.predefinedValue=CHECKBOX_NULL_DEFAULT_VALUE;
+-				if (element.source.logger.isInfoEnabled()) element.source.logger.info(element.source.getRowColumnVector(element.begin).appendTo(new StringBuilder(200)).append(": compulsory \"value\" attribute of ").append(formControlType).append(" control \"").append(name).append("\" is missing, assuming the value \"").append(CHECKBOX_NULL_DEFAULT_VALUE).append('"').toString());
++				element.source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(element.source.getRowColumnVector(element.begin), "",": compulsory \"value\" attribute of "+formControlType+" control \""+name+"\" is missing, assuming the value \""+CHECKBOX_NULL_DEFAULT_VALUE+'"'));
+ 			}
+ 		}
+ 		public boolean setValue(final String value) {
+@@ -827,7 +827,7 @@
+ 			missingOrBlank="blank";
+ 		}
+ 		final Source source=getElement().source;
+-		if (source.logger.isInfoEnabled()) source.logger.info(getElement().source.getRowColumnVector(getElement().begin).appendTo(new StringBuilder(200)).append(": compulsory \"name\" attribute of ").append(formControlType).append(" control is ").append(missingOrBlank).toString());
++		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(getElement().begin), "", ": compulsory \"name\" attribute of "+formControlType+" control is "+missingOrBlank));
+ 	}
+ 
+ 	private static final void addValueTo(final Collection<String> collection, final String value) {
+Index: src/java/net/htmlparser/jericho/HtmlIssue.java
+===================================================================
+--- src/java/net/htmlparser/jericho/HtmlIssue.java	(revision 0)
++++ src/java/net/htmlparser/jericho/HtmlIssue.java	(revision 0)
+@@ -0,0 +1,61 @@
++/**
++ * Copyright 2006-2008 by Amplafi. All rights reserved.
++ * Confidential. 
++ */
++package net.htmlparser.jericho;
++
++
++public class HtmlIssue {
++    private final RowColumnVector begin;
++    private final RowColumnVector end;
++    private final String priorToPosition;
++    private final String message;
++
++    public HtmlIssue(RowColumnVector begin, String priorToPosition, String message) {
++        this.begin = begin;
++        this.end = null;
++        this.priorToPosition = priorToPosition;
++        this.message = message;
++    }
++    public HtmlIssue(RowColumnVector begin, RowColumnVector end, String priorToPosition, String message) {
++        this.begin = begin;
++        this.end = end;
++        this.priorToPosition = priorToPosition;
++        this.message = message;
++    }
++
++    /**
++     * @return the begin
++     */
++    public RowColumnVector getBegin() {
++        return begin;
++    }
++
++    /**
++     * @return the end
++     */
++    public RowColumnVector getEnd() {
++        return end;
++    }
++    /**
++     * @return the priorToPosition
++     */
++    public String getPriorToPosition() {
++        return priorToPosition;
++    }
++
++    /**
++     * @return the message
++     */
++    public String getMessage() {
++        return message;
++    }
++    @Override
++    public String toString() {
++        if ( begin != null ) {
++            return begin.appendTo(new StringBuilder(200).append(priorToPosition).append(" at ")).append(":").append(message).toString();
++        } else {
++            return priorToPosition+" "+message;
++        }
++    }
++}
+\ No newline at end of file
+Index: src/java/net/htmlparser/jericho/HtmlIssueProcessingHandler.java
+===================================================================
+--- src/java/net/htmlparser/jericho/HtmlIssueProcessingHandler.java	(revision 0)
++++ src/java/net/htmlparser/jericho/HtmlIssueProcessingHandler.java	(revision 0)
+@@ -0,0 +1,9 @@
++package net.htmlparser.jericho;
++
++/**
++ * Implementers called when an issue with the html being processed is discovered.
++ *
++ */
++public interface HtmlIssueProcessingHandler {
++    public void htmlIssue(HtmlIssue htmlIssue);
++}
+Index: src/java/net/htmlparser/jericho/RowColumnVector.java
+===================================================================
+--- src/java/net/htmlparser/jericho/RowColumnVector.java	(revision 26)
++++ src/java/net/htmlparser/jericho/RowColumnVector.java	(working copy)
+@@ -87,7 +87,7 @@
+ 		return appendTo(new StringBuilder(20)).toString();
+ 	}
+ 
+-	StringBuilder appendTo(final StringBuilder sb) {
++	public StringBuilder appendTo(final StringBuilder sb) {
+ 		if (row!=-1) return sb.append("(r").append(row).append(",c").append(column).append(",p").append(pos).append(')');
+ 		return sb.append("(p").append(pos).append(')');
+ 	}
+Index: src/java/net/htmlparser/jericho/Source.java
+===================================================================
+--- src/java/net/htmlparser/jericho/Source.java	(revision 26)
++++ src/java/net/htmlparser/jericho/Source.java	(working copy)
+@@ -90,7 +90,7 @@
+ 	private List<Element> allElements=null;
+ 	private List<Element> childElements=null;
+ 
+-	private static String lastNewLine=null;
++	private String lastNewLine=null;
+ 
+ 	private static final String UNINITIALISED="";
+ 	private static final String CR="\r";
+@@ -98,6 +98,7 @@
+ 	private static final String CRLF="\r\n";
+ 
+ 	static final String PACKAGE_NAME=Source.class.getPackage().getName(); // "net.htmlparser.jericho"
++	private HtmlIssueProcessingHandler htmlIssueProcessingHandler = new DefaultHtmlProcessingHandler(this);
+ 
+ 	/**
+ 	 * Constructs a new <code>Source</code> object from the specified text.
+@@ -593,7 +594,7 @@
+ 		if (allTagsArray!=null) return allTagsArray;
+ 		final boolean assumeNoNestedTags=false;
+ 		if (cache.getTagCount()!=0) {
+-			logger.warn("Full sequential parse clearing all tags from cache. Consider calling Source.fullSequentialParse() manually immediately after construction of Source.");
++			logger.debug("Full sequential parse clearing all tags from cache. Consider calling Source.fullSequentialParse() manually immediately after construction of Source.");
+ 			cache.clear();
+ 		}
+ 		final boolean useAllTypesCacheSave=useAllTypesCache;
+@@ -1632,4 +1633,18 @@
+ 	final boolean isStreamed() {
+ 		return cache==Cache.STREAMED_SOURCE_MARKER;
+ 	}
++
++    /**
++     * @param htmlIssueProcessingHandler the htmlIssueProcessingHandler to set
++     */
++    public void setHtmlIssueProcessingHandler(HtmlIssueProcessingHandler htmlIssueProcessingHandler) {
++        this.htmlIssueProcessingHandler = htmlIssueProcessingHandler;
++    }
++
++    /**
++     * @return the htmlIssueProcessingHandler
++     */
++    public HtmlIssueProcessingHandler getHtmlIssueProcessingHandler() {
++        return htmlIssueProcessingHandler;
++    }
+ }
+Index: src/java/net/htmlparser/jericho/StartTag.java
+===================================================================
+--- src/java/net/htmlparser/jericho/StartTag.java	(revision 26)
++++ src/java/net/htmlparser/jericho/StartTag.java	(working copy)
+@@ -167,7 +167,7 @@
+ 				if (endTag.element!=Element.NOT_CACHED) {
+ 					// This is presumably impossible, except in certain circumstances where the cache was cleared, such as if the parser decides to do a full sequential parse after some tags have already been found.
+ 					// If the existing element and the current element are not the same, log it.
+-					if (source.logger.isInfoEnabled() && !element.equals(endTag.element)) source.logger.info(source.getRowColumnVector(endTag.begin).appendTo(new StringBuilder(200).append("End tag ").append(endTag).append(" at ")).append(" terminates more than one element").toString()); 
++					if ( !element.equals(endTag.element)) source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(endTag.begin), "End tag "+endTag," terminates more than one element")); 
+ 				}
+ 				endTag.element=element;
+ 			}
+@@ -553,7 +553,7 @@
+ 			if (startTagType==StartTagType.NORMAL && HTMLElements.END_TAG_REQUIRED_NESTING_FORBIDDEN_SET.contains(name)) {
+ 				final StartTag nextStartTag=source.getNextStartTag(end,name);
+ 				if (nextStartTag==null || nextStartTag.begin>nextEndTag.begin) return nextEndTag;
+-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append("StartTag at ")).append(" missing required end tag - invalid nested start tag encountered before end tag").toString());
++				source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin),"StartTag", " missing required end tag - invalid nested start tag encountered before end tag"));
+ 				// Terminate the element at the start of the invalidly nested start tag.
+ 				// This is how IE and Mozilla treat illegally nested A elements, but other elements may vary.
+ 				return new EndTag(source,nextStartTag.begin,nextStartTag.begin,EndTagType.NORMAL,name);
+@@ -561,7 +561,7 @@
+ 			final Segment[] getResult=getEndTag(nextEndTag,checkForEmptyElementTag,Tag.isXMLName(name));
+ 			if (getResult!=null) return (EndTag)getResult[0];
+ 		}
+-		if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append("StartTag at ")).append(" missing required end tag").toString());
++		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin), "StartTag '"+this+"'"," missing required end tag"));
+ 		return null;
+ 	}
+ 
+@@ -728,7 +728,7 @@
+ 						if (value.equals(attributeValue)) return startTag;
+ 						if (value.equalsIgnoreCase(attributeValue)) {
+ 							if (!valueCaseSensitive) return startTag;
+-							if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(searchPos).appendTo(new StringBuilder(200)).append(": StartTag with attribute ").append(attributeName).append("=\"").append(attributeValue).append("\" ignored during search because its case does not match search value \"").append(value).append('"').toString());
++							source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(searchPos), "", ": StartTag with attribute "+attributeName+"=\""+attributeValue+"\" ignored during search because its case does not match search value \""+value+'"'));
+ 						}
+ 					}
+ 				}
+Index: src/java/net/htmlparser/jericho/StartTagTypeGenericImplementation.java
+===================================================================
+--- src/java/net/htmlparser/jericho/StartTagTypeGenericImplementation.java	(revision 26)
++++ src/java/net/htmlparser/jericho/StartTagTypeGenericImplementation.java	(working copy)
+@@ -135,7 +135,7 @@
+ 		} else {
+ 			end=getEnd(source,nameEnd);
+ 			if (end==-1) {
+-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(pos).appendTo(new StringBuilder(200).append("StartTag ").append(name).append(" at ")).append(" not recognised as type '").append(getDescription()).append("' because it has no closing delimiter").toString());
++			    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos), "StartTag "+name," not recognised as type '"+getDescription()+"' because it has no closing delimiter"));
+ 				return null;
+ 			}
+ 		}
+Index: src/java/net/htmlparser/jericho/StartTagTypeUnregistered.java
+===================================================================
+--- src/java/net/htmlparser/jericho/StartTagTypeUnregistered.java	(revision 26)
++++ src/java/net/htmlparser/jericho/StartTagTypeUnregistered.java	(working copy)
+@@ -31,7 +31,7 @@
+ 		final int closingDelimiterPos=source.getParseText().indexOf('>',pos+1);
+ 		if (closingDelimiterPos==-1) return null;
+ 		final Tag tag=constructStartTag(source,pos,closingDelimiterPos+1,"",null);
+-		if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(tag.getBegin()).appendTo(new StringBuilder(200).append("Encountered possible StartTag at ")).append(" whose content does not match a registered StartTagType").toString());
++		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(tag.getBegin()), ": Encountered possible StartTag '"+tag+"'"," whose content does not match a registered StartTagType"));
+ 		return tag;
+ 	}
+ }
+Index: src/java/net/htmlparser/jericho/TagType.java
+===================================================================
+--- src/java/net/htmlparser/jericho/TagType.java	(revision 26)
++++ src/java/net/htmlparser/jericho/TagType.java	(working copy)
+@@ -637,7 +637,7 @@
+ 				final Tag tag=tagType.constructTagAt(source,pos);
+ 				if (tag!=null) return tag;
+ 			} catch (IndexOutOfBoundsException ex) {
+-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(pos).appendTo(new StringBuilder(200).append("Tag at ")).append(" not recognised as type '").append(tagType.getDescription()).append("' because it has no end delimiter").toString());
++			    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos),"Tag"," not recognised as type '"+tagType.getDescription()+"' because it has no end delimiter"));
+ 			}
+ 		}
+ 		return null;
