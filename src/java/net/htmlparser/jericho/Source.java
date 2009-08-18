@@ -1642,9 +1642,11 @@ public final class Source extends Segment implements Iterable<Segment> {
     }
 
     /**
+     * @param <T> 
      * @return the htmlIssueProcessingHandler
      */
-    public HtmlIssueProcessingHandler getHtmlIssueProcessingHandler() {
-        return htmlIssueProcessingHandler;
+    @SuppressWarnings("unchecked")
+    public <T extends HtmlIssueProcessingHandler> T getHtmlIssueProcessingHandler() {
+        return (T) htmlIssueProcessingHandler;
     }
 }
