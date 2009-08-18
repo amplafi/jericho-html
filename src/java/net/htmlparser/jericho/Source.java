@@ -90,7 +90,7 @@ public final class Source extends Segment implements Iterable<Segment> {
 	private List<Element> allElements=null;
 	private List<Element> childElements=null;
 
-	private static String lastNewLine=null;
+	private String lastNewLine=null;
 
 	private static final String UNINITIALISED="";
 	private static final String CR="\r";
@@ -98,6 +98,7 @@ public final class Source extends Segment implements Iterable<Segment> {
 	private static final String CRLF="\r\n";
 
 	static final String PACKAGE_NAME=Source.class.getPackage().getName(); // "net.htmlparser.jericho"
+	private HtmlIssueProcessingHandler htmlIssueProcessingHandler = new DefaultHtmlProcessingHandler(this);
 
 	/**
 	 * Constructs a new <code>Source</code> object from the specified text.
@@ -593,7 +594,7 @@ public final class Source extends Segment implements Iterable<Segment> {
 		if (allTagsArray!=null) return allTagsArray;
 		final boolean assumeNoNestedTags=false;
 		if (cache.getTagCount()!=0) {
-			logger.warn("Full sequential parse clearing all tags from cache. Consider calling Source.fullSequentialParse() manually immediately after construction of Source.");
+			logger.debug("Full sequential parse clearing all tags from cache. Consider calling Source.fullSequentialParse() manually immediately after construction of Source.");
 			cache.clear();
 		}
 		final boolean useAllTypesCacheSave=useAllTypesCache;
@@ -1632,4 +1633,18 @@ public final class Source extends Segment implements Iterable<Segment> {
 	final boolean isStreamed() {
 		return cache==Cache.STREAMED_SOURCE_MARKER;
 	}
+
+    /**
+     * @param htmlIssueProcessingHandler the htmlIssueProcessingHandler to set
+     */
+    public void setHtmlIssueProcessingHandler(HtmlIssueProcessingHandler htmlIssueProcessingHandler) {
+        this.htmlIssueProcessingHandler = htmlIssueProcessingHandler;
+    }
+
+    /**
+     * @return the htmlIssueProcessingHandler
+     */
+    public HtmlIssueProcessingHandler getHtmlIssueProcessingHandler() {
+        return htmlIssueProcessingHandler;
+    }
 }

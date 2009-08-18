@@ -637,7 +637,7 @@ public abstract class TagType {
 				final Tag tag=tagType.constructTagAt(source,pos);
 				if (tag!=null) return tag;
 			} catch (IndexOutOfBoundsException ex) {
-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(pos).appendTo(new StringBuilder(200).append("Tag at ")).append(" not recognised as type '").append(tagType.getDescription()).append("' because it has no end delimiter").toString());
+			    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos),"Tag"," not recognised as type '"+tagType.getDescription()+"' because it has no end delimiter"));
 			}
 		}
 		return null;

@@ -283,14 +283,14 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 
 	private static boolean reachedMaxErrorCount(final int errorCount, final Source source, final String logType, final String tagName, final int logBegin, final int maxErrorCount) {
 		if (errorCount<=maxErrorCount) return false;
-		if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"rejected because it contains too many errors");
+		log(source,logType,tagName,logBegin,"rejected because it contains too many errors");
 		return true;
 	}
 
 	private static boolean isInvalidEmptyElementTag(final StartTagType startTagType, final Source source, final int i, final String logType, final String tagName, final int logBegin) {
 		// This checks whether we've found the characters "/>" but it wasn't recognised as the closing delimiter because isClosingSlashIgnored is true.
 		if (startTagType!=StartTagType.NORMAL || !startTagType.atEndOfAttributes(source,i,false)) return false;
-		if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"contains a '/' character before the closing '>', which is ignored because tags of this name cannot be empty-element tags");
+		log(source,logType,tagName,logBegin,"contains a '/' character before the closing '>', which is ignored because tags of this name cannot be empty-element tags");
 		return true;
 	}
 
@@ -524,10 +524,13 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 	}
 	
 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3, final int pos) {
-		source.logger.info(source.getRowColumnVector(pos).appendTo(source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append(part1).append(' ').append(part2).append(" at ")).append(' ').append(part3).append(" at position ")).toString());
+	    // TODO
+		source.logger.info(source.getRowColumnVector(pos).appendTo(
+		    source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append(part1).append(' ').append(part2).append(" at "))
+		    .append(' ').append(part3).append(" at position ")).toString());
 	}
 
 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3) {
-		source.logger.info(source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append(part1).append(' ').append(part2).append(" at ")).append(' ').append(part3).toString());
+		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin), part1+' '+part2, ' '+part3));
 	}
 }

@@ -87,7 +87,7 @@ public final class RowColumnVector {
 		return appendTo(new StringBuilder(20)).toString();
 	}
 
-	StringBuilder appendTo(final StringBuilder sb) {
+	public StringBuilder appendTo(final StringBuilder sb) {
 		if (row!=-1) return sb.append("(r").append(row).append(",c").append(column).append(",p").append(pos).append(')');
 		return sb.append("(p").append(pos).append(')');
 	}

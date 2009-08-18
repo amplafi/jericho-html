@@ -31,7 +31,7 @@ final class StartTagTypeUnregistered extends StartTagType {
 		final int closingDelimiterPos=source.getParseText().indexOf('>',pos+1);
 		if (closingDelimiterPos==-1) return null;
 		final Tag tag=constructStartTag(source,pos,closingDelimiterPos+1,"",null);
-		if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(tag.getBegin()).appendTo(new StringBuilder(200).append("Encountered possible StartTag at ")).append(" whose content does not match a registered StartTagType").toString());
+		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(tag.getBegin()), ": Encountered possible StartTag '"+tag+"'"," whose content does not match a registered StartTagType"));
 		return tag;
 	}
 }

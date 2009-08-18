@@ -144,7 +144,7 @@ public class EndTagTypeGenericImplementation extends EndTagType {
 		if (isStatic()) {
 			name=getNamePrefix();
 			if (!parseText.containsAt(getClosingDelimiter(),startDelimiterEnd)) {
-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(pos).appendTo(new StringBuilder(200).append("EndTag of expected format ").append(staticString).append(" at ")).append(" not recognised as type '").append(getDescription()).append("' because it is missing the closing delimiter").toString());
+				source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos), name+": EndTag of expected format "+staticString," not recognised as type '"+getDescription()+"' because it is missing the closing delimiter"));
 				return null;
 			}
 			end=startDelimiterEnd+getClosingDelimiter().length();
@@ -155,7 +155,7 @@ public class EndTagTypeGenericImplementation extends EndTagType {
 			int expectedClosingDelimiterPos=nameEnd;
 			while (Segment.isWhiteSpace(parseText.charAt(expectedClosingDelimiterPos))) expectedClosingDelimiterPos++;
 			if (!parseText.containsAt(getClosingDelimiter(),expectedClosingDelimiterPos)) {
-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(pos).appendTo(new StringBuilder(200).append("EndTag ").append(name).append(" at ")).append(" not recognised as type '").append(getDescription()).append("' because its name and closing delimiter are separated by characters other than white space").toString());
+			    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos), "EndTag "+name, " not recognised as type '"+getDescription()+"' because its name and closing delimiter are separated by characters other than white space"));
 				return null;
 			}
 			end=expectedClosingDelimiterPos+getClosingDelimiter().length();

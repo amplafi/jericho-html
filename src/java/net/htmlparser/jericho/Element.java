@@ -326,7 +326,7 @@ public final class Element extends Segment {
 					}
 					final Element childElement=childStartTag.getElement();
 					if (childElement.end>end) {
-						if (source.logger.isInfoEnabled()) source.logger.info("Child "+childElement.getDebugInfo()+" extends beyond end of parent "+getDebugInfo());
+						source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(null, "Child "+childElement.getDebugInfo(), " extends beyond end of parent "+getDebugInfo()));
 						if (!INCLUDE_INCORRECTLY_NESTED_CHILDREN_IN_HIERARCHY) {
 							pos=childElement.end; 
 							continue; 

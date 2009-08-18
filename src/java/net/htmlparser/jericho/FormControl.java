@@ -85,7 +85,7 @@ public abstract class FormControl extends Segment {
 			FormControlType formControlType=FormControlType.getFromInputElementType(typeAttributeValue);
 			if (formControlType==null) {
 				if (formControlType.isNonFormControl(typeAttributeValue)) return null;
-				if (element.source.logger.isInfoEnabled()) element.source.logger.info(element.source.getRowColumnVector(element.begin).appendTo(new StringBuilder(200)).append(": INPUT control with unrecognised type \"").append(typeAttributeValue).append("\" assumed to be type \"text\"").toString());
+				element.source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(element.source.getRowColumnVector(element.begin), "", "INPUT control with unrecognised type \""+typeAttributeValue+"\" assumed to be type \"text\""));
 				formControlType=FormControlType.TEXT;
 			}
 			switch (formControlType) {
@@ -610,7 +610,7 @@ public abstract class FormControl extends Segment {
 			super(element,formControlType,true);
 			if (elementContainer.predefinedValue==null) {
 				elementContainer.predefinedValue=CHECKBOX_NULL_DEFAULT_VALUE;
-				if (element.source.logger.isInfoEnabled()) element.source.logger.info(element.source.getRowColumnVector(element.begin).appendTo(new StringBuilder(200)).append(": compulsory \"value\" attribute of ").append(formControlType).append(" control \"").append(name).append("\" is missing, assuming the value \"").append(CHECKBOX_NULL_DEFAULT_VALUE).append('"').toString());
+				element.source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(element.source.getRowColumnVector(element.begin), "",": compulsory \"value\" attribute of "+formControlType+" control \""+name+"\" is missing, assuming the value \""+CHECKBOX_NULL_DEFAULT_VALUE+'"'));
 			}
 		}
 		public boolean setValue(final String value) {
@@ -827,7 +827,7 @@ public abstract class FormControl extends Segment {
 			missingOrBlank="blank";
 		}
 		final Source source=getElement().source;
-		if (source.logger.isInfoEnabled()) source.logger.info(getElement().source.getRowColumnVector(getElement().begin).appendTo(new StringBuilder(200)).append(": compulsory \"name\" attribute of ").append(formControlType).append(" control is ").append(missingOrBlank).toString());
+		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(getElement().begin), "", ": compulsory \"name\" attribute of "+formControlType+" control is "+missingOrBlank));
 	}
 
 	private static final void addValueTo(final Collection<String> collection, final String value) {

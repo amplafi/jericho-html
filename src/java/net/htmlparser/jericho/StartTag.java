@@ -167,7 +167,7 @@ public final class StartTag extends Tag {
 				if (endTag.element!=Element.NOT_CACHED) {
 					// This is presumably impossible, except in certain circumstances where the cache was cleared, such as if the parser decides to do a full sequential parse after some tags have already been found.
 					// If the existing element and the current element are not the same, log it.
-					if (source.logger.isInfoEnabled() && !element.equals(endTag.element)) source.logger.info(source.getRowColumnVector(endTag.begin).appendTo(new StringBuilder(200).append("End tag ").append(endTag).append(" at ")).append(" terminates more than one element").toString()); 
+					if ( !element.equals(endTag.element)) source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(endTag.begin), "End tag "+endTag," terminates more than one element")); 
 				}
 				endTag.element=element;
 			}
@@ -553,7 +553,7 @@ public final class StartTag extends Tag {
 			if (startTagType==StartTagType.NORMAL && HTMLElements.END_TAG_REQUIRED_NESTING_FORBIDDEN_SET.contains(name)) {
 				final StartTag nextStartTag=source.getNextStartTag(end,name);
 				if (nextStartTag==null || nextStartTag.begin>nextEndTag.begin) return nextEndTag;
-				if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append("StartTag at ")).append(" missing required end tag - invalid nested start tag encountered before end tag").toString());
+				source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin),"StartTag", " missing required end tag - invalid nested start tag encountered before end tag"));
 				// Terminate the element at the start of the invalidly nested start tag.
 				// This is how IE and Mozilla treat illegally nested A elements, but other elements may vary.
 				return new EndTag(source,nextStartTag.begin,nextStartTag.begin,EndTagType.NORMAL,name);
@@ -561,7 +561,7 @@ public final class StartTag extends Tag {
 			final Segment[] getResult=getEndTag(nextEndTag,checkForEmptyElementTag,Tag.isXMLName(name));
 			if (getResult!=null) return (EndTag)getResult[0];
 		}
-		if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append("StartTag at ")).append(" missing required end tag").toString());
+		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin), "StartTag '"+this+"'"," missing required end tag"));
 		return null;
 	}
 
@@ -728,7 +728,7 @@ public final class StartTag extends Tag {
 						if (value.equals(attributeValue)) return startTag;
 						if (value.equalsIgnoreCase(attributeValue)) {
 							if (!valueCaseSensitive) return startTag;
-							if (source.logger.isInfoEnabled()) source.logger.info(source.getRowColumnVector(searchPos).appendTo(new StringBuilder(200)).append(": StartTag with attribute ").append(attributeName).append("=\"").append(attributeValue).append("\" ignored during search because its case does not match search value \"").append(value).append('"').toString());
+							source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(searchPos), "", ": StartTag with attribute "+attributeName+"=\""+attributeValue+"\" ignored during search because its case does not match search value \""+value+'"'));
 						}
 					}
 				}

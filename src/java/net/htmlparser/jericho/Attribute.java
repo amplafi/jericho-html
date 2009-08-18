@@ -27,7 +27,7 @@ import java.io.*;
  * name/value segment within a {@link StartTag}.
  * <p>
  * An instance of this class is a representation of a single attribute in the source document and is not modifiable.
- * The {@link OutputDocument#replace(Attributes, Map)} and {@link OutputDocument#replace(Attributes, boolean convertNamesToLowerCase)} methods
+ * The {@link OutputDocument#replace(Attributes, java.util.Map)} and {@link OutputDocument#replace(Attributes, boolean)} methods
  * provide the means to add, delete or modify attributes and their values in an {@link OutputDocument}.
  * <p>
  * Obtained using the {@link Attributes#get(String key)} method.
