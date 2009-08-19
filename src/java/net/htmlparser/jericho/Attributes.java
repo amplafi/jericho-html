@@ -524,10 +524,7 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 	}
 	
 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3, final int pos) {
-	    // TODO
-		source.logger.info(source.getRowColumnVector(pos).appendTo(
-		    source.getRowColumnVector(begin).appendTo(new StringBuilder(200).append(part1).append(' ').append(part2).append(" at "))
-		    .append(' ').append(part3).append(" at position ")).toString());
+	    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin), source.getRowColumnVector(pos), part1+' '+part2, ' '+part3));
 	}
 
 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3) {

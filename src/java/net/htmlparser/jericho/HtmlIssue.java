@@ -52,10 +52,14 @@ public class HtmlIssue {
     }
     @Override
     public String toString() {
-        if ( begin != null ) {
+        if ( begin == null ) {
+            return priorToPosition+" "+message;
+        } else if (end == null) {
             return begin.appendTo(new StringBuilder(200).append(priorToPosition).append(" at ")).append(":").append(message).toString();
         } else {
-            return priorToPosition+" "+message;
+            return end.appendTo(
+                begin.appendTo(new StringBuilder(200).append(priorToPosition).append(" at ")).append(message)
+                    .append(" at position ")).toString();
         }
     }
 }
