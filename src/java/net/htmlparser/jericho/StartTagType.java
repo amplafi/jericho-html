@@ -20,8 +20,6 @@
 
 package net.htmlparser.jericho;
 
-import java.util.*;
-
 /**
  * Defines the syntax for a start tag type.
  * <p>
@@ -470,7 +468,7 @@ public abstract class StartTagType extends TagType {
 	 * {@linkplain #getClosingDelimiter() closing delimiter} is encountered.  If the character sequence representing the
 	 * closing delimiter occurs within a quoted attribute value it is not recognised as the end of the tag.
 	 * <p>
-	 * The {@link #atEndOfAttributes(Source, int pos, boolean isClosingSlashIgnored)} method can be overridden to provide more control
+	 * The {@link #atEndOfAttributes(Source, int, boolean)} method can be overridden to provide more control
 	 * over where the attributes end.
 	 * <p>
 	 * <dl>

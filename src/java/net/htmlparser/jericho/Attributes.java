@@ -146,7 +146,7 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 							} else {
 								if (isTerminatingCharacter) {
 									if (i==maxEnd) {
-										if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"terminated in the middle of a quoted attribute value",i);
+										log(source,logType,tagName,logBegin,"terminated in the middle of a quoted attribute value",i);
 										if (reachedMaxErrorCount(++errorCount,source,logType,tagName,logBegin,maxErrorCount)) return null;
 										valueSegment=new Segment(source,currentBegin,i);
 										valueSegmentIncludingQuotes=new Segment(source,currentBegin-1,i); // this is missing the end quote
@@ -164,7 +164,7 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 							attributesEnd=valueSegmentIncludingQuotes.getEnd();
 							parsingState=ParsingState.BETWEEN_ATTRIBUTES;
 						} else if (ch=='<' && quote==' ') {
-							if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"rejected because of '<' character in unquoted attribute value",i);
+							log(source,logType,tagName,logBegin,"rejected because of '<' character in unquoted attribute value",i);
 							return null;
 						}
 						break;
@@ -181,11 +181,11 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 						} else if (!Tag.isXMLNameChar(ch)) {
 							// invalid character detected in attribute name.
 							if (ch=='<') {
-								if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"rejected because of '<' character in attribute name",i);
+								log(source,logType,tagName,logBegin,"rejected because of '<' character in attribute name",i);
 								return null;
 							}
 							if (isInvalidEmptyElementTag(startTagType,source,i,logType,tagName,logBegin)) break;
-							if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"contains attribute name with invalid character",i);
+							log(source,logType,tagName,logBegin,"contains attribute name with invalid character",i);
 							if (reachedMaxErrorCount(++errorCount,source,logType,tagName,logBegin,maxErrorCount)) return null;
 						}
 						break;
@@ -201,7 +201,7 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 						} else if (ch=='=') {
 							parsingState=ParsingState.START_VALUE;
 						} else if (ch=='<') {
-							if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"rejected because of '<' character after attribute name",i);
+							log(source,logType,tagName,logBegin,"rejected because of '<' character after attribute name",i);
 							return null;
 						}
 						break;
@@ -212,23 +212,23 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 								quote=' ';
 							} else {
 								if (quote!=' ') {
-									if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"has missing whitespace after quoted attribute value",i);
+									log(source,logType,tagName,logBegin,"has missing whitespace after quoted attribute value",i);
 									// only count this as an error if there have already been other errors, otherwise allow unlimited errors of this type.
 									if (errorCount>0 && reachedMaxErrorCount(++errorCount,source,logType,tagName,logBegin,maxErrorCount)) return null;
 								}
 								if (!Tag.isXMLNameStartChar(ch)) {
 									// invalid character detected as first character of attribute name.
 									if (ch=='<') {
-										if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"rejected because of '<' character",i);
+										log(source,logType,tagName,logBegin,"rejected because of '<' character",i);
 										return null;
 									}
 									if (isInvalidEmptyElementTag(startTagType,source,i,logType,tagName,logBegin)) break;
 									if (startTagType==StartTagType.NORMAL && startTagType.atEndOfAttributes(source,i,false)) {
 										// This checks whether we've found the characters "/>" but it wasn't recognised as the closing delimiter because isClosingSlashIgnored is true.
-										if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"contains a '/' character before the closing '>', which is ignored because tags of this name cannot be empty-element tags");
+										log(source,logType,tagName,logBegin,"contains a '/' character before the closing '>', which is ignored because tags of this name cannot be empty-element tags");
 										break;
 									}
-									if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"contains attribute name with invalid first character",i);
+									log(source,logType,tagName,logBegin,"contains attribute name with invalid first character",i);
 									if (reachedMaxErrorCount(++errorCount,source,logType,tagName,logBegin,maxErrorCount)) return null;
 								}
 								parsingState=ParsingState.IN_NAME;
@@ -239,7 +239,7 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 					case START_VALUE:
 						currentBegin=i;
 						if (isTerminatingCharacter) {
-							if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"has missing attribute value after '=' sign",i);
+							log(source,logType,tagName,logBegin,"has missing attribute value after '=' sign",i);
 							// only count this as an error if there have already been other errors, otherwise allow unlimited errors of this type.
 							if (errorCount>0 && reachedMaxErrorCount(++errorCount,source,logType,tagName,logBegin,maxErrorCount)) return null;
 							final Segment valueSegment=new Segment(source,i,i);
@@ -254,7 +254,7 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 						} else if (isWhiteSpace(ch)) {
 							break; // just ignore whitespace after the '=' sign as nearly all browsers do.
 						} else if (ch=='<') {
-							if (source.logger.isInfoEnabled()) log(source,logType,tagName,logBegin,"rejected because of '<' character at the start of an attribute value",i);
+							log(source,logType,tagName,logBegin,"rejected because of '<' character at the start of an attribute value",i);
 							return null;
 						} else {
 							quote=' ';
