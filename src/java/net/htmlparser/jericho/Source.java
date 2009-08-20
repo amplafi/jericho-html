@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -90,7 +90,7 @@ public final class Source extends Segment implements Iterable<Segment> {
 	private List<Element> allElements=null;
 	private List<Element> childElements=null;
 
-	private String lastNewLine=null;
+	private static volatile String lastNewLine=null;
 
 	private static final String UNINITIALISED="";
 	private static final String CR="\r";
@@ -473,8 +473,13 @@ public final class Source extends Segment implements Iterable<Segment> {
 		if (newLine!=UNINITIALISED) return newLine;
 		for (int i=0; i<end; i++) {
 			char ch=sourceText.charAt(i);
-			if (ch=='\n') return newLine=lastNewLine=LF;
-			if (ch=='\r') return newLine=lastNewLine=(++i<end && sourceText.charAt(i)=='\n') ? CRLF : CR;
+			if (ch=='\n')
+				newLine=LF;
+			else if (ch=='\r')
+				newLine=(++i<end && sourceText.charAt(i)=='\n') ? CRLF : CR;
+			else continue;
+			lastNewLine=newLine;
+			return newLine;
 		}
 		return newLine=null;
 	}
