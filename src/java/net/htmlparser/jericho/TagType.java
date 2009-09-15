@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -103,6 +103,8 @@ public abstract class TagType {
 	private final String namePrefix;
 	final String startDelimiterPrefix;
 
+	private static Logger logger=null;
+
 	TagType(final String description, final String startDelimiter, final String closingDelimiter, final boolean isServerTag, final String startDelimiterPrefix) {
 		// startDelimiterPrefix is either "<" or "</"
 		this.description=description;
@@ -122,6 +124,7 @@ public abstract class TagType {
 	 * @see #deregister()
 	 */
 	public final void register() {
+		getLogger().debug("Register tag type: "+this);
 		TagTypeRegister.add(this);
 	}
 	
@@ -132,6 +135,7 @@ public abstract class TagType {
 	 * @see #register()
 	 */
 	public final void deregister() {
+		getLogger().debug("Deregister tag type "+this);
 		TagTypeRegister.remove(this);
 	}
 
@@ -189,7 +193,13 @@ public abstract class TagType {
 	 *   <dd>
 	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
 	 *     <tr><th>Tag Type<th>Start Delimiter
-	 *     <tr><td>{@link MicrosoftTagTypes#DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT}<td><code>&lt;![</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_IF}<td><code>&lt;!--[if</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_ENDIF}<td><code>&lt;![endif]--&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF}<td><code>&lt;![if</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF}<td><code>&lt;![endif]&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_IF}<td><code>&lt;!--[if</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_ENDIF}<td><code>&lt;!--&lt;![endif]--&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_SIMPLIFIED_IF}<td><code>&lt;!--[if</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SCRIPT}<td><code>&lt;script</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SHORT}<td><code>&lt;?</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_STANDARD}<td><code>&lt;?php</code>
@@ -243,7 +253,13 @@ public abstract class TagType {
 	 *   <dd>
 	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
 	 *     <tr><th>Tag Type<th>Closing Delimiter
-	 *     <tr><td>{@link MicrosoftTagTypes#DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT}<td><code>]&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_IF}<td><code>]&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_ENDIF}<td><i>(empty&nbsp;string)</i>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF}<td><code>]&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF}<td><i>(empty&nbsp;string)</i>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_IF}<td><code>]&gt;&lt;!--&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_ENDIF}<td><i>(empty&nbsp;string)</i>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_SIMPLIFIED_IF}<td><code>]&gt;--&gt;</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SCRIPT}<td><code>&gt;</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SHORT}<td><code>?&gt;</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_STANDARD}<td><code>?&gt;</code>
@@ -302,7 +318,13 @@ public abstract class TagType {
 	 *   <dd>
 	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
 	 *     <tr><th>Tag Type<th>Is Server Tag
-	 *     <tr><td>{@link MicrosoftTagTypes#DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_SIMPLIFIED_IF}<td><code>false</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SCRIPT}<td><code>true</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SHORT}<td><code>true</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_STANDARD}<td><code>true</code>
@@ -337,8 +359,8 @@ public abstract class TagType {
 	 *   <dd>
 	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
 	 *     <tr><th>Tag Type<th>Name Prefix
-	 *     <tr><td>{@link StartTagType#UNREGISTERED}<td><i>(empty string)</i>
-	 *     <tr><td>{@link StartTagType#NORMAL}<td><i>(empty string)</i>
+	 *     <tr><td>{@link StartTagType#UNREGISTERED}<td><i>(empty&nbsp;string)</i>
+	 *     <tr><td>{@link StartTagType#NORMAL}<td><i>(empty&nbsp;string)</i>
 	 *     <tr><td>{@link StartTagType#COMMENT}<td><code>!--</code>
 	 *     <tr><td>{@link StartTagType#XML_DECLARATION}<td><code>?xml</code>
 	 *     <tr><td>{@link StartTagType#XML_PROCESSING_INSTRUCTION}<td><code>?</code>
@@ -346,8 +368,8 @@ public abstract class TagType {
 	 *     <tr><td>{@link StartTagType#MARKUP_DECLARATION}<td><code>!</code>
 	 *     <tr><td>{@link StartTagType#CDATA_SECTION}<td><code>![cdata[</code>
 	 *     <tr><td>{@link StartTagType#SERVER_COMMON}<td><code>%</code>
-	 *     <tr><td>{@link EndTagType#UNREGISTERED}<td><i>(empty string)</i>
-	 *     <tr><td>{@link EndTagType#NORMAL}<td><i>(empty string)</i>
+	 *     <tr><td>{@link EndTagType#UNREGISTERED}<td><i>(empty&nbsp;string)</i>
+	 *     <tr><td>{@link EndTagType#NORMAL}<td><i>(empty&nbsp;string)</i>
 	 *    </table>
 	 * </dl>
 	 * <dl>
@@ -355,7 +377,13 @@ public abstract class TagType {
 	 *   <dd>
 	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
 	 *     <tr><th>Tag Type<th>Name Prefix
-	 *     <tr><td>{@link MicrosoftTagTypes#DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT}<td><code>![</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_IF}<td><code>!--[if</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_ENDIF}<td><code>![endif]--&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF}<td><code>![if</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF}<td><code>![endif]&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_IF}<td><code>!--[if</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_ENDIF}<td><code>!--&lt;![endif]--&gt;</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_SIMPLIFIED_IF}<td><code>!--[if</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SCRIPT}<td><code>script</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SHORT}<td><code>?</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_STANDARD}<td><code>?php</code>
@@ -643,6 +671,11 @@ public abstract class TagType {
 		return null;
 	}
 
+	private static Logger getLogger() {
+		if (logger==null) logger=Source.newLogger();
+		return logger;
+	}
+	
 	private static final class TagTypesIgnoringEnclosedMarkup {
 		// This internal class is used to contain the array because its static initialisation can occur after
 		// the StartTagType.COMMENT and StartTagType.CDATA_SECTION members have been created.
@@ -652,3 +685,4 @@ public abstract class TagType {
 		};
 	}
 }
+

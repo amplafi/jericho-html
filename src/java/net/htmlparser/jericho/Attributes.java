@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -523,6 +523,11 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 		return populateMap(new LinkedHashMap<String,String>(getCount()*2,1.0F),convertNamesToLowerCase);
 	}
 	
+	void setStartTag(final StartTag startTag) {
+		// this just preloads the startTag cache in each Attribute so we don't have to go looking for it if it is requested.
+		for (Attribute attribute : attributeList) attribute.startTag=startTag;
+	}
+
 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3, final int pos) {
 	    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin), source.getRowColumnVector(pos), part1+' '+part2, ' '+part3));
 	}

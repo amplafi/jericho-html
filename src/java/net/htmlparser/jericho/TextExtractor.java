@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -79,7 +79,7 @@ public class TextExtractor implements CharStreamSource {
 	private boolean includeAttributes=false;
 	private boolean excludeNonHTMLElements=false;
 
-	private static Map<String,AttributeIncludeChecker> map=initDefaultAttributeIncludeCheckerMap(); // maps each possibly included attribute name to an AttributeIncludeChecker instance
+	private static final Map<String,AttributeIncludeChecker> map; // maps each possibly included attribute name to an AttributeIncludeChecker instance, initialised in static block below.
 
 	/**
 	 * Constructs a new <code>TextExtractor</code> based on the specified {@link Segment}.
@@ -289,8 +289,8 @@ public class TextExtractor implements CharStreamSource {
 		}
 	};
 
-	private static Map<String,AttributeIncludeChecker> initDefaultAttributeIncludeCheckerMap() {
-		Map<String,AttributeIncludeChecker> map=new HashMap<String,AttributeIncludeChecker>();
+	static {
+		map=new HashMap<String,AttributeIncludeChecker>();
 		map.put("title",ALWAYS_INCLUDE); // add title attribute
 		map.put("alt",ALWAYS_INCLUDE); // add alt attribute (APPLET, AREA, IMG and INPUT elements)
 		map.put("label",ALWAYS_INCLUDE); // add label attribute (OPTION and OPTGROUP elements)
@@ -298,7 +298,6 @@ public class TextExtractor implements CharStreamSource {
 		map.put("content",INCLUDE_IF_NAME_ATTRIBUTE_PRESENT); // add content attribute (META element)
 		map.put("href",ALWAYS_INCLUDE); // add href attribute (A, AREA and LINK elements)
 		// don't bother with the prompt attribute from the ININDEX element as the element is deprecated and very rarely used.
-		return map;
 	}
 
 	/**

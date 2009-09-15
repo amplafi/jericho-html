@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -85,6 +85,8 @@ public final class StartTag extends Tag {
 	private final Attributes attributes;
 	final StartTagType startTagType;
 
+	static final StartTag NOT_CACHED=(StartTag)Tag.NOT_CACHED;
+
 	/**
 	 * Constructs a new <code>StartTag</code>.
 	 *
@@ -99,6 +101,7 @@ public final class StartTag extends Tag {
 		super(source,begin,end,name);
 		this.attributes=attributes;
 		this.startTagType=startTagType;
+		if (attributes!=null) attributes.setStartTag(this);
 	}
 
 	// only used to create Tag.NOT_CACHED
@@ -300,7 +303,9 @@ public final class StartTag extends Tag {
 			attributesBegin++;
 			if (attributesBegin==maxEnd) return null;
 		}
-		return Attributes.construct(source,begin,attributesBegin,maxEnd,startTagType,name,maxErrorCount);
+		Attributes attributes=Attributes.construct(source,begin,attributesBegin,maxEnd,startTagType,name,maxErrorCount);
+		if (attributes!=null) attributes.setStartTag(this);
+		return attributes;
 	}
 
 	/**
@@ -791,4 +796,3 @@ public final class StartTag extends Tag {
 		return getEndTag(nextStartTagsEndTag.end,(StartTag)getResult[1],nextNextEndTag,checkForEmptyElementTag,isXMLTagName);  // recurse to see if this is the matching end tag
 	}
 }
-

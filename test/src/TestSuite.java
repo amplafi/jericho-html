@@ -10,7 +10,7 @@ import net.htmlparser.jericho.*;
 	StreamedTextTest.class,
 	StreamedParseTextTest.class,
 	StreamedSourceTest.class,
-	StreamedSourceHugeFileTest.class,
-	HTMLSanitiserTest.class
+	StreamedSourceHugeFileTest.class
+//	,HTMLSanitiserTest.class
 })
 public class TestSuite {}

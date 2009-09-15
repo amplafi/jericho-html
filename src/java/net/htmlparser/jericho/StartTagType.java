@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -60,7 +60,7 @@ public abstract class StartTagType extends TagType {
 	 *     <tr><td>{@link #getStartDelimiter() StartDelimiter}<td><code>&lt;</code>
 	 *     <tr><td>{@link #getClosingDelimiter() ClosingDelimiter}<td><code>&gt;</code>
 	 *     <tr><td>{@link #isServerTag() IsServerTag}<td><code>false</code>
-	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><i>(empty string)</i>
+	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><i>(empty&nbsp;string)</i>
 	 *     <tr><td>{@link #getCorrespondingEndTagType() CorrespondingEndTagType}<td><code>null</code>
 	 *     <tr><td>{@link #hasAttributes() HasAttributes}<td><code>false</code>
 	 *     <tr><td>{@link #isNameAfterPrefixRequired() IsNameAfterPrefixRequired}<td><code>false</code>
@@ -85,7 +85,7 @@ public abstract class StartTagType extends TagType {
 	 *     <tr><td>{@link #getStartDelimiter() StartDelimiter}<td><code>&lt;</code>
 	 *     <tr><td>{@link #getClosingDelimiter() ClosingDelimiter}<td><code>&gt;</code>
 	 *     <tr><td>{@link #isServerTag() IsServerTag}<td><code>false</code>
-	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><i>(empty string)</i>
+	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><i>(empty&nbsp;string)</i>
 	 *     <tr><td>{@link #getCorrespondingEndTagType() CorrespondingEndTagType}<td>{@link EndTagType#NORMAL}
 	 *     <tr><td>{@link #hasAttributes() HasAttributes}<td><code>true</code>
 	 *     <tr><td>{@link #isNameAfterPrefixRequired() IsNameAfterPrefixRequired}<td><code>true</code>
@@ -443,7 +443,13 @@ public abstract class StartTagType extends TagType {
 	 *   <dd>
 	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
 	 *     <tr><th>Start Tag Type<th>Corresponding End Tag Type
-	 *     <tr><td>{@link MicrosoftTagTypes#DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT}<td><code>null</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_IF}<td><code>null</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_ENDIF}<td><code>null</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF}<td><code>null</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF}<td><code>null</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_IF}<td><code>null</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_ENDIF}<td><code>null</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_SIMPLIFIED_IF}<td><code>null</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SCRIPT}<td>{@link EndTagType#NORMAL}
 	 *     <tr><td>{@link PHPTagTypes#PHP_SHORT}<td><code>null</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_STANDARD}<td><code>null</code>
@@ -493,7 +499,13 @@ public abstract class StartTagType extends TagType {
 	 *   <dd>
 	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
 	 *     <tr><th>Start Tag Type<th>Has Attributes
-	 *     <tr><td>{@link MicrosoftTagTypes#DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_SIMPLIFIED_IF}<td><code>false</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SCRIPT}<td><code>true</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SHORT}<td><code>false</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_STANDARD}<td><code>false</code>
@@ -541,7 +553,13 @@ public abstract class StartTagType extends TagType {
 	 *   <dd>
 	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
 	 *     <tr><th>Start Tag Type<th>Name After Prefix Required
-	 *     <tr><td>{@link MicrosoftTagTypes#DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT}<td><code>true</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_HIDDEN_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_IF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_ENDIF}<td><code>false</code>
+	 *     <tr><td>{@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_VALIDATING_SIMPLIFIED_IF}<td><code>false</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SCRIPT}<td><code>false</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_SHORT}<td><code>false</code>
 	 *     <tr><td>{@link PHPTagTypes#PHP_STANDARD}<td><code>false</code>

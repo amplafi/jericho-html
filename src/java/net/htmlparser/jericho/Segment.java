@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -571,6 +571,71 @@ public class Segment implements Comparable<Segment>, CharSequence {
 			characterReference=getNextCharacterReference(characterReference.end);
 		} while (characterReference!=null);
 		return list;
+	}
+
+	/**
+	 * Returns a list of all {@linkplain Attribute attributes} {@linkplain #encloses(Segment) enclosed} by this segment that have <a target="_blank" href="http://en.wikipedia.org/wiki/URI">URI</a> values.
+	 * <p>
+	 * According to the <a target="_blank" href="http://www.w3.org/TR/html401/">HTML 4.01 specification</a>, the following attributes have URI values:
+	 * <table class="bordered" cellspacing="0">
+	 *  <tr><th>HTML element name<th>Attribute name
+	 *  <tr><td>{@link HTMLElementName#A A}<td>href
+	 *  <tr><td>{@link HTMLElementName#APPLET APPLET}<td>codebase
+	 *  <tr><td>{@link HTMLElementName#AREA AREA}<td>href
+	 *  <tr><td>{@link HTMLElementName#BASE BASE}<td>href
+	 *  <tr><td>{@link HTMLElementName#BLOCKQUOTE BLOCKQUOTE}<td>cite
+	 *  <tr><td>{@link HTMLElementName#BODY BODY}<td>background
+	 *  <tr><td>{@link HTMLElementName#FORM FORM}<td>action
+	 *  <tr><td>{@link HTMLElementName#FRAME FRAME}<td>longdesc
+	 *  <tr><td>{@link HTMLElementName#FRAME FRAME}<td>src
+	 *  <tr><td>{@link HTMLElementName#DEL DEL}<td>cite
+	 *  <tr><td>{@link HTMLElementName#HEAD HEAD}<td>profile
+	 *  <tr><td>{@link HTMLElementName#IFRAME IFRAME}<td>longdesc
+	 *  <tr><td>{@link HTMLElementName#IFRAME IFRAME}<td>src
+	 *  <tr><td>{@link HTMLElementName#IMG IMG}<td>longdesc
+	 *  <tr><td>{@link HTMLElementName#IMG IMG}<td>src
+	 *  <tr><td>{@link HTMLElementName#IMG IMG}<td>usemap
+ 	 *  <tr><td>{@link HTMLElementName#INPUT INPUT}<td>src
+	 *  <tr><td>{@link HTMLElementName#INPUT INPUT}<td>usemap
+	 *  <tr><td>{@link HTMLElementName#INS INS}<td>cite
+	 *  <tr><td>{@link HTMLElementName#LINK LINK}<td>href
+	 *  <tr><td>{@link HTMLElementName#OBJECT OBJECT}<td>classid
+	 *  <tr><td>{@link HTMLElementName#OBJECT OBJECT}<td>codebase
+	 *  <tr><td>{@link HTMLElementName#OBJECT OBJECT}<td>data
+	 *  <tr><td>{@link HTMLElementName#OBJECT OBJECT}<td>usemap
+	 *  <tr><td>{@link HTMLElementName#Q Q}<td>cite
+ 	 *  <tr><td>{@link HTMLElementName#SCRIPT SCRIPT}<td>src
+	 * </table>
+	 * <p>
+	 * Attributes from other elements may also be returned if the attribute name matches one of those in the list above.
+	 * <p>
+	 * This method is often used in conjunction with the {@link #getStyleURISegments()} method in order to find all URIs in a document.
+	 * <p>
+	 * The attributes are returned in order of appearance.
+	 *
+	 * @return a list of all {@linkplain Attribute attributes} {@linkplain #encloses(Segment) enclosed} by this segment that have <a target="_blank" href="http://en.wikipedia.org/wiki/URI">URI</a> values.
+	 * @see #getStyleURISegments()
+	 */
+	public List<Attribute> getURIAttributes() {
+		return URIAttributes.getList(this);
+	}
+
+	/**
+	 * Returns a list of all <a target="_blank" href="http://en.wikipedia.org/wiki/URI">URI</a> {@linkplain Segment segments}
+	 * inside <code>style</code> attribute values {@linkplain #encloses(Segment) enclosed} by this segment.
+	 * <p>
+	 * If this segment does not contain any tags, the entire segment is assumed to be a <code>style</code> attribute value.
+	 * <p>
+	 * The URI segments are found by searching the <code>style</code> attribute values for the functional notation "<code>url()</code>" as described in
+	 * <a target="_blank" href="http://www.w3.org/TR/CSS2/syndata.html#uri">section 4.3.4 of the CSS2 specification</a>.
+	 * <p>
+	 * The segments are returned in order of appearance.
+	 *
+	 * @return a list of all <a target="_blank" href="http://en.wikipedia.org/wiki/URI">URI</a> {@linkplain Segment segments} inside <code>style</code> attribute values {@linkplain #encloses(Segment) enclosed} by this segment.
+	 * @see #getURIAttributes()
+	 */
+	public List<Segment> getStyleURISegments() {
+		return URIAttributes.getStyleURISegments(this);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -41,6 +41,7 @@ public final class Attribute extends Segment {
 	private final Segment nameSegment;
 	private final Segment valueSegment;
 	private final Segment valueSegmentIncludingQuotes;
+	StartTag startTag=StartTag.NOT_CACHED;
 
 	static final String CHECKED="checked";
 	static final String CLASS="class";
@@ -219,6 +220,18 @@ public final class Attribute extends Segment {
 	public char getQuoteChar() {
 		if (valueSegment==valueSegmentIncludingQuotes) return ' '; // no quotes
 		return source.charAt(valueSegmentIncludingQuotes.getBegin());
+	}
+
+	/**
+	 * Returns the start tag to which this attribute belongs.
+	 * @return the start tag to which this attribute belongs, or <code>null</code> if it is not within a start tag.
+	 */
+	public StartTag getStartTag() {
+		if (startTag==StartTag.NOT_CACHED) {
+			final Tag tag=source.getEnclosingTag(begin);
+			startTag=(tag==null || tag instanceof EndTag) ? null : (StartTag)tag;
+		}
+		return startTag;
 	}
 
 	/**
