@@ -7,8 +7,8 @@ th,td {vertical-align: top; border-width: 1px}
 table {border-width: 1px; border-style: none}
 table.bordered {border-collapse: collapse}
 table.bordered td, table.bordered th {border-style: solid; border-color: black; padding: 0px 15px 0px 15px; vertical-align: middle}
-table.CompactDL {border-collapse: collapse; border-style: solid; margin-top: 0.5em; margin-bottom: 0.5em}
-table.CompactDL td {border-bottom-style: solid; padding-left: 0.5em; padding-right: 0.5em}
+table.CompactDL {border-collapse: collapse; border-style: solid; border-color: black; margin-top: 0.5em; margin-bottom: 0.5em}
+table.CompactDL td {border-bottom-style: solid; border-color: black; padding-left: 0.5em; padding-right: 0.5em}
 dt {font-weight: bold}
 .Separated dd, .Separated li {margin-bottom: 1.6em; margin-top: 1.6em}
 .HalfSeparated li {margin-bottom: 0.5em; margin-top: 0.5em}
