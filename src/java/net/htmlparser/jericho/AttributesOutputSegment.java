@@ -47,7 +47,7 @@ import java.io.*;
  * whereas the <code>Map</code> treats them as case sensitive.
  * <p>
  * This class has been removed from the public API and the functionality replaced with the
- * {@link OutputDocument#replace(Attributes, Map)} and {@link OutputDocument#replace(Attributes, boolean convertNamesToLowerCase)} methods.
+ * {@link OutputDocument#replace(Attributes, Map)} and {@link OutputDocument#replace(Attributes, boolean)} methods.
  *
  * @see OutputDocument
  * @see Attributes
@@ -95,7 +95,7 @@ class AttributesOutputSegment implements OutputSegment {
 	 *
 	 * @param attributes  the <code>Attributes</code> defining the span of the new <code>AttributesOutputSegment</code>.
 	 * @param map  the <code>Map</code> containing the name/value entries.
-	 * @see #AttributesOutputSegment(Attributes, boolean convertNamesToLowerCase)
+	 * @see #AttributesOutputSegment(Attributes, boolean)
 	 */
 	public AttributesOutputSegment(final Attributes attributes, final Map<String,String> map) {
 		if (map==null || attributes==null) throw new IllegalArgumentException("both arguments must be non-null");

@@ -22,7 +22,6 @@ package net.htmlparser.jericho;
 
 import java.util.*;
 import java.io.*;
-import java.net.*;
 
 /**
  * Extracts the textual content from HTML markup.

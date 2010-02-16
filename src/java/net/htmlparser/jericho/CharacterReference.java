@@ -295,7 +295,7 @@ public abstract class CharacterReference extends Segment {
 	 * <p>
 	 * <a href="#Unterminated">Unterminated</a> character references are dealt with according to the rules for
 	 * text outside of attribute values in the {@linkplain Config#CurrentCompatibilityMode current compatibility mode}.
-	 * See the discussion of the <code>insideAttributeValue</code> parameter of the {@link #decode(CharSequence, boolean insideAttributeValue)}
+	 * See the discussion of the <code>insideAttributeValue</code> parameter of the {@link #decode(CharSequence, boolean)}
 	 * method for a more detailed explanation of this topic.
 	 *
 	 * @param text  the source text
