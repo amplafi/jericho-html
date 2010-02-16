@@ -3,11 +3,7 @@ package net.htmlparser.jericho;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.io.*;
 import java.net.*;
-import java.util.*;
-import java.nio.CharBuffer;
-import java.nio.BufferOverflowException;
 
 public class StreamedSourceHugeFileTest {
 	private static final String sourceUrlString="file:D:/Data/StreamedSourceHugeFileTest.txt";
