@@ -22,7 +22,6 @@ package net.htmlparser.jericho;
 
 import java.util.*;
 import java.io.*;
-import java.net.*;
 
 /**
  * Formats HTML source by laying out each non-inline-level element on a new line with an appropriate indent.
