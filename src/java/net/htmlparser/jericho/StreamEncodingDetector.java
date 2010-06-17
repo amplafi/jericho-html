@@ -184,7 +184,7 @@ final class StreamEncodingDetector {
 			// pattern X?X0
 			return setEncoding(UTF_16LE,"default 16-bit LE encoding (byte stream stars with pattern XX ?? XX 00)"); // Regardless of the second byte, assume the fourth 00 byte indicates UTF-16LE.
 		}
-		// pattern X??X
+		// pattern X??X   
 		if (b2==0) {
 			// pattern X0?X
 			// Assuming the second 00 byte doesn't indicate a NUL character, and that it is very unlikely that this is a 32-bit encoding
@@ -197,14 +197,14 @@ final class StreamEncodingDetector {
 		}
 		// pattern XX?X
 		if (b3==0) return setEncoding(UTF_16BE,"default 16-bit BE encoding (byte stream starts with pattern XX XX 00 XX)"); // pattern XX0X likely to indicate a 16-bit BE encoding with the first character > U+00FF.
-		// pattern XXXX
+		// pattern XXXX 
 		// Although it is still possible that this is a 16-bit encoding with the first two characters > U+00FF
 		// Assume the more likely case of four 8-bit characters <= U+00FF.
 		// Check whether it fits some common EBCDIC strings that might be found at the start of a document:
 		if (b1==0x4C) { // first character is EBCDIC '<' (ASCII 'L'), check a couple more characters before assuming EBCDIC encoding:
-			if (b2==0x6F && b3==0xA7 && b4==0x94) return setEncoding(EBCDIC,"default EBCDIC encoding (<?xml...> detected)"); // first four bytes are "<?xm" in EBCDIC ("Lo§”" in Windows-1252)
-			if (b2==0x5A && b3==0xC4 && b4==0xD6) return setEncoding(EBCDIC,"default EBCDIC encoding (<!DOCTYPE...> detected)"); // first four bytes are "<!DO" in EBCDIC ("LZÄÖ" in Windows-1252)
-			if ((b2&b3&b4&0x80)!=0) return setEncoding(EBCDIC,"default EBCDIC-compatible encoding (HTML element detected)"); // all of the 3 bytes after the '<' have the high-order bit set, indicating EBCDIC letters such as "<HTM" ("LÈãÔ" in Windows-1252), or "<htm" ("Lˆ£”" in Windows-1252)
+			if (b2==0x6F && b3==0xA7 && b4==0x94) return setEncoding(EBCDIC,"default EBCDIC encoding (<?xml...> detected)"); // first four bytes are "<?xm" in EBCDIC ("Loï¿½ï¿½" in Windows-1252)
+			if (b2==0x5A && b3==0xC4 && b4==0xD6) return setEncoding(EBCDIC,"default EBCDIC encoding (<!DOCTYPE...> detected)"); // first four bytes are "<!DO" in EBCDIC ("LZï¿½ï¿½" in Windows-1252)
+			if ((b2&b3&b4&0x80)!=0) return setEncoding(EBCDIC,"default EBCDIC-compatible encoding (HTML element detected)"); // all of the 3 bytes after the '<' have the high-order bit set, indicating EBCDIC letters such as "<HTM" ("Lï¿½ï¿½ï¿½" in Windows-1252), or "<htm" ("Lï¿½ï¿½ï¿½" in Windows-1252)
 			// although this is not an exhaustive check for EBCDIC, it is safer to assume a more common preliminary encoding if none of these conditions are met.
 		}
 		// Now confident that it is not EBCDIC, but some other 8-bit encoding.
