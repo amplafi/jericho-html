@@ -10,14 +10,23 @@ public class HtmlIssue {
     private final RowColumnVector end;
     private final String priorToPosition;
     private final String message;
+    private transient Source source;
 
-    public HtmlIssue(RowColumnVector begin, String priorToPosition, String message) {
-        this.begin = begin;
-        this.end = null;
+    public HtmlIssue(Source source, int begin, String priorToPosition, String message) {
+        this(source,begin,null,priorToPosition,message);
+    }
+    public HtmlIssue(Source source, int begin, Integer end, String priorToPosition, String message) {
+        this.source = source;
+        this.begin = source.getRowColumnVector(begin);
+        this.end = end ==null?null:source.getRowColumnVector(end);
         this.priorToPosition = priorToPosition;
         this.message = message;
     }
-    public HtmlIssue(RowColumnVector begin, RowColumnVector end, String priorToPosition, String message) {
+    public HtmlIssue(Source source, RowColumnVector begin, String priorToPosition, String message) {
+        this(source, begin, null, priorToPosition, message);
+    }
+    public HtmlIssue(Source source, RowColumnVector begin, RowColumnVector end, String priorToPosition, String message) {
+        this.source = source;
         this.begin = begin;
         this.end = end;
         this.priorToPosition = priorToPosition;
@@ -61,5 +70,8 @@ public class HtmlIssue {
                 begin.appendTo(new StringBuilder(200).append(priorToPosition).append(" at ")).append(message)
                     .append(" at position ")).toString();
         }
+    }
+    public Source getSource() {
+        return this.source;
     }
 }

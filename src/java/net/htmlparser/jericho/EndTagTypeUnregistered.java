@@ -33,7 +33,7 @@ final class EndTagTypeUnregistered extends EndTagType {
 		final int nameEnd=parseText.indexOf(getClosingDelimiter(),nameBegin);
 		final String name=source.getName(nameBegin,nameEnd); // throws IndexOutOfBoundsException if nameEnd==-1
 		final EndTag endTag=constructEndTag(source,pos,nameEnd+getClosingDelimiter().length(),name);
-		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos), name+" Encountered possible EndTag", " whose content does not match a registered EndTagType"));
+		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source,pos, name+" Encountered possible EndTag", " whose content does not match a registered EndTagType"));
 		return endTag;
 	}
 }

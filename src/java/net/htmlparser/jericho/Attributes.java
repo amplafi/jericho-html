@@ -529,10 +529,10 @@ public final class Attributes extends SequentialListSegment<Attribute> {
 	}
 
 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3, final int pos) {
-	    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin), source.getRowColumnVector(pos), part1+' '+part2, ' '+part3));
+	    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source,begin, pos, part1+' '+part2, ' '+part3));
 	}
 
 	private static void log(final Source source, final String part1, final CharSequence part2, final int begin, final String part3) {
-		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(begin), part1+' '+part2, ' '+part3));
+		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source,begin, part1+' '+part2, ' '+part3));
 	}
 }

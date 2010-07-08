@@ -135,7 +135,7 @@ public class StartTagTypeGenericImplementation extends StartTagType {
 		} else {
 			end=getEnd(source,nameEnd);
 			if (end==-1) {
-			    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(pos), "StartTag "+name," not recognised as type '"+getDescription()+"' because it has no closing delimiter"));
+			    source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source,pos, "StartTag "+name," not recognised as type '"+getDescription()+"' because it has no closing delimiter"));
 				return null;
 			}
 		}

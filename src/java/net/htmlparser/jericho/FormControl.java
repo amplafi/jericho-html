@@ -85,7 +85,7 @@ public abstract class FormControl extends Segment {
 			FormControlType formControlType=FormControlType.getFromInputElementType(typeAttributeValue);
 			if (formControlType==null) {
 				if (formControlType.isNonFormControl(typeAttributeValue)) return null;
-				element.source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(element.source.getRowColumnVector(element.begin), "", "INPUT control with unrecognised type \""+typeAttributeValue+"\" assumed to be type \"text\""));
+				element.source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(element.source,element.begin, "", "INPUT control with unrecognised type \""+typeAttributeValue+"\" assumed to be type \"text\""));
 				formControlType=FormControlType.TEXT;
 			}
 			switch (formControlType) {
@@ -610,7 +610,7 @@ public abstract class FormControl extends Segment {
 			super(element,formControlType,true);
 			if (elementContainer.predefinedValue==null) {
 				elementContainer.predefinedValue=CHECKBOX_NULL_DEFAULT_VALUE;
-				element.source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(element.source.getRowColumnVector(element.begin), "",": compulsory \"value\" attribute of "+formControlType+" control \""+name+"\" is missing, assuming the value \""+CHECKBOX_NULL_DEFAULT_VALUE+'"'));
+				element.source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(element.source,element.begin, "",": compulsory \"value\" attribute of "+formControlType+" control \""+name+"\" is missing, assuming the value \""+CHECKBOX_NULL_DEFAULT_VALUE+'"'));
 			}
 		}
 		public boolean setValue(final String value) {
@@ -827,7 +827,7 @@ public abstract class FormControl extends Segment {
 			missingOrBlank="blank";
 		}
 		final Source source=getElement().source;
-		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source.getRowColumnVector(getElement().begin), "", ": compulsory \"name\" attribute of "+formControlType+" control is "+missingOrBlank));
+		source.getHtmlIssueProcessingHandler().htmlIssue(new HtmlIssue(source, getElement().begin, "", ": compulsory \"name\" attribute of "+formControlType+" control is "+missingOrBlank));
 	}
 
 	private static final void addValueTo(final Collection<String> collection, final String value) {
