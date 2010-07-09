@@ -3,10 +3,8 @@ package net.htmlparser.jericho;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.io.*;
-import java.net.*;
+import java.net.*; 
 import java.util.*;
-import java.nio.CharBuffer;
 
 public class NodeIteratorTest {
 	private static final String sourceUrlString="file:test/data/StreamedSourceTest.html";
