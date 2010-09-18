@@ -18,6 +18,11 @@
         <developerConnection>scm:svn:https://svn1.hosted-projects.com/transparentpolitics/modified-opensource/${artifactId}/trunk</developerConnection>
     </scm>
     <properties>
+        <java-build>1.6</java-build>
+        <ant-build>1.8.1</ant-build>
+        <log4j-build>1.2.15</log4j-build>
+        <slf4j-build>1.5.8</slf4j-build>    
+        <commons-logging-build>1.1.1</commons-logging-build>        
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>    
     <build>
@@ -41,8 +46,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${java-build}</source>
+                    <target>${java-build}</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>        
@@ -86,13 +91,36 @@
     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging-build}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>avalon-framework</groupId>
+                    <artifactId>avalon-framework</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>logkit</groupId>
+                    <artifactId>logkit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
             <artifactId>commons-logging-api</artifactId>
-            <version>1.1.1</version>
+            <version>${commons-logging-build}</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.15</version>
+            <version>${log4j-build}</version>
             <exclusions>
                 <!-- dependencies show up in 1.2.15 -->
                 <exclusion>
@@ -102,16 +130,16 @@
                 <exclusion>
                     <groupId>com.sun.jdmk</groupId>
                     <artifactId>jmxtools</artifactId>
-                </exclusion>   
+                </exclusion>      
                 <exclusion>
                     <groupId>javax.jms</groupId>
                     <artifactId>jms</artifactId>
-                </exclusion>   
+                </exclusion>
                 <exclusion>
                     <groupId>javax.mail</groupId>
                     <artifactId>mail</artifactId>
-                </exclusion>                   
-            </exclusions>                   
+                </exclusion>                          
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -122,9 +150,21 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.8</version>
+            <version>${slf4j-build}</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>amplafi.public</id>
+            <url>http://www.amplafi.com/repository/</url>
+            <releases>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </repository>
+    </repositories>
     <distributionManagement>
         <repository>
             <id>amplafi.public</id>
