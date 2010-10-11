@@ -52,7 +52,7 @@ public abstract class EndTagType extends TagType {
 	 *     <tr><td>{@link #getStartDelimiter() StartDelimiter}<td><code>&lt;/</code>
 	 *     <tr><td>{@link #getClosingDelimiter() ClosingDelimiter}<td><code>&gt;</code>
 	 *     <tr><td>{@link #isServerTag() IsServerTag}<td><code>false</code>
-	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><i>(empty string)</i>
+	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><i>(empty&nbsp;string)</i>
 	 *     <tr><td>{@link #getCorrespondingStartTagType() CorrespondingStartTagType}<td><code>null</code>
 	 *     <tr><td>{@link #generateHTML(String) generateHTML}<code>("<var>StartTagName</var>")</code><td><code>&lt;/<var>StartTagName</var>&gt;</code>
 	 *    </table>
@@ -75,7 +75,7 @@ public abstract class EndTagType extends TagType {
 	 *     <tr><td>{@link #getStartDelimiter() StartDelimiter}<td><code>&lt;/</code>
 	 *     <tr><td>{@link #getClosingDelimiter() ClosingDelimiter}<td><code>&gt;</code>
 	 *     <tr><td>{@link #isServerTag() IsServerTag}<td><code>false</code>
-	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><i>(empty string)</i>
+	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><i>(empty&nbsp;string)</i>
 	 *     <tr><td>{@link #getCorrespondingStartTagType() CorrespondingStartTagType}<td>{@link StartTagType#NORMAL}
 	 *     <tr><td>{@link #generateHTML(String) generateHTML}<code>("<var>StartTagName</var>")</code><td><code>&lt;/<var>StartTagName</var>&gt;</code>
 	 *    </table>
