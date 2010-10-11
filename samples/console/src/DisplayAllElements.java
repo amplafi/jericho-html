@@ -11,7 +11,7 @@ public class DisplayAllElements {
 		else
 			sourceUrlString=args[0];
 		if (sourceUrlString.indexOf(':')==-1) sourceUrlString="file:"+sourceUrlString;
-		MicrosoftTagTypes.register();
+		MicrosoftConditionalCommentTagTypes.register();
 		PHPTagTypes.register();
 		PHPTagTypes.PHP_SHORT.deregister(); // remove PHP short tags for this example otherwise they override processing instructions
 		MasonTagTypes.register();

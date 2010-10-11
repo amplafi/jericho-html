@@ -1,1 +1,1 @@
-@set package_name=jericho-html-3.1
+@set package_name=jericho-html-3.2-dev

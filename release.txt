@@ -1,6 +1,33 @@
 Jericho HTML Parser
 Release Notes
 
+3.2   (development)
+       - Bug Fixes:
+         - [2826979] IllegalCharsetNameException thrown when illegal encoding
+           specified in the document.
+         - [2837434] Potential multithreading bug in Source.getNewLine()
+         - TextExtractor did not include any attribute values.
+         - All unterminated character references were decoded regardless of the
+           configuration settings (bug introduced in 3.1).
+	       - Renderer class - <div> under <li> resulted in new line.
+	       - No exceptions thrown if invalid charset is specified by server or in
+	         source document.
+	     - Added Renderer.setIncludeAlternateText(boolean) method.
+	     - Added Renderer.renderAlternateText(StartTag) method.
+	     - Added Renderer.setIncludeFirstElementTopMargin(boolean) method.
+	     - Added Renderer.setDefaultTopMargin(String,int) static method.
+	     - Added Renderer.setDefaultBottomMargin(String,int) static method.
+	     - Added Renderer.setDefaultIndent(String,boolean) static method.
+	     - Renderer now evaluates inline styles for top, bottom and left margins.
+       - Added Attribute.getStartTag() method.
+       - Added Segment.getURIAttributes() method.
+       - Added Segment.getStyleURISegments() method.
+       - Added deregister() methods to the extended tag type classes.
+       - Added MicrosoftConditionalCommentTagTypes class.
+       - Added StartTagType.SERVER_COMMON_COMMENT tag type.
+       - SourceFormatter now inlines DOCTYPE tags.
+       - Deprecated MicrosoftTagTypes class.
+
 3.1   (2009-06-11)
        - Bug Fixes:
          - [2793556] Infinite loop on Segment.getAllStartTags()
@@ -57,6 +84,10 @@ Release Notes
        - Added Renderer.renderHyperlinkURL(StartTag) method.
        - Added HTMLSanitiser sample program.
        - Upgraded to slf4j-api-1.5.6
+
+2.6.2 (development)
+       - Bug Fixes:
+         - TextExtractor did not include any attribute values.
 
 2.6.1 (2008-12-27)
        - MAVEN release only to fix corrupt MANIFEST.MF file.

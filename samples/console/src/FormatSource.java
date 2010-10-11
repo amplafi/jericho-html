@@ -11,7 +11,7 @@ public class FormatSource {
 		else
 			sourceUrlString=args[0];
 		if (sourceUrlString.indexOf(':')==-1) sourceUrlString="file:"+sourceUrlString;
-		MicrosoftTagTypes.register();
+		MicrosoftConditionalCommentTagTypes.register();
 		PHPTagTypes.register();
 		MasonTagTypes.register();
 		Source source=new Source(new URL(sourceUrlString));

@@ -11,7 +11,7 @@ public class FindSpecificTags {
 		else
 			sourceUrlString=args[0];
 		if (sourceUrlString.indexOf(':')==-1) sourceUrlString="file:"+sourceUrlString;
-		MicrosoftTagTypes.register();
+		MicrosoftConditionalCommentTagTypes.register();
 		MasonTagTypes.register();
 		Source source=new Source(new URL(sourceUrlString));
 		System.out.println("\n*******************************************************************************\n");
