@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.1
+// Version 3.2-dev
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -20,15 +20,14 @@
 
 package net.htmlparser.jericho;
 
-import java.util.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.net.*;
 
 final class EncodingDetector {
 	private final InputStream inputStream;
-	private String encoding=null;
-	private String encodingSpecificationInfo=null;
+	private String encoding;
+	private String encodingSpecificationInfo;
 	private final String preliminaryEncoding;
 	private final String preliminaryEncodingSpecificationInfo;
 	private final String alternativePreliminaryEncoding;
@@ -48,7 +47,7 @@ final class EncodingDetector {
 
 	public EncodingDetector(final InputStream inputStream, final String preliminaryEncoding) throws IOException {
 		this(inputStream,preliminaryEncoding,"preliminary encoding set explicitly",null);
-		if (!Charset.isSupported(preliminaryEncoding)) throw new UnsupportedEncodingException(preliminaryEncoding+" specified as preliminaryEncoding constructor argument");
+		if (!isEncodingSupported(preliminaryEncoding)) throw new UnsupportedEncodingException(preliminaryEncoding+" specified as preliminaryEncoding constructor argument");
 		detectDocumentSpecifiedEncoding();
 	}
 
@@ -71,7 +70,7 @@ final class EncodingDetector {
 		this.preliminaryEncoding=preliminaryEncoding;
 		this.preliminaryEncodingSpecificationInfo=preliminaryEncodingSpecificationInfo;
 		this.alternativePreliminaryEncoding=alternativePreliminaryEncoding;
-		if (alternativePreliminaryEncoding!=null && !Charset.isSupported(alternativePreliminaryEncoding)) throw new UnsupportedEncodingException(alternativePreliminaryEncoding+" specified as alternativePreliminaryEncoding constructor argument");
+		if (alternativePreliminaryEncoding!=null && !isEncodingSupported(alternativePreliminaryEncoding)) throw new UnsupportedEncodingException(alternativePreliminaryEncoding+" specified as alternativePreliminaryEncoding constructor argument");
 	}
 	
 	public InputStream getInputStream() {
@@ -96,9 +95,7 @@ final class EncodingDetector {
 
 	public Reader openReader() throws UnsupportedEncodingException {
 		if (encoding==null) return new InputStreamReader(inputStream,ISO_8859_1); // encoding==null only if input stream is empty so use an arbitrary encoding.
-		if (!Charset.isSupported(encoding)) {
-			throw new UnsupportedEncodingException(encoding+": "+encodingSpecificationInfo);
-		}
+		if (!isEncodingSupported(encoding)) throw new UnsupportedEncodingException(encoding+": "+encodingSpecificationInfo);
 		return new InputStreamReader(inputStream,encoding);
 	}
 
@@ -111,7 +108,7 @@ final class EncodingDetector {
 	private boolean detectDocumentSpecifiedEncoding() throws IOException {
 		inputStream.mark(PREVIEW_BYTE_COUNT);
 		String safePreliminaryEncoding;
-		if (Charset.isSupported(preliminaryEncoding)) {
+		if (isEncodingSupported(preliminaryEncoding)) {
 			safePreliminaryEncoding=preliminaryEncoding;
 		} else {
 			if (alternativePreliminaryEncoding==null) throw new UnsupportedEncodingException(preliminaryEncoding+": "+preliminaryEncodingSpecificationInfo);
@@ -134,11 +131,16 @@ final class EncodingDetector {
 			}
 			documentSpecifiedEncodingInfoSuffix="no encoding specified in document";
 		} else {
-			if (Charset.isSupported(previewSource.getDocumentSpecifiedEncoding()))
-				return setEncoding(previewSource.getDocumentSpecifiedEncoding(),previewSource.getEncodingSpecificationInfo());
-			// Document specified encoding is not supported. Fall back on preliminary encoding.
-			documentSpecifiedEncodingInfoSuffix="encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document is not supported";
-			if (logger.isWarnEnabled()) logger.warn("Unsupported encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document, using preliminary encoding "+safePreliminaryEncoding+" instead");
+		    try {
+    			if (isEncodingSupported(previewSource.getDocumentSpecifiedEncoding()))
+    				return setEncoding(previewSource.getDocumentSpecifiedEncoding(),previewSource.getEncodingSpecificationInfo());
+    			// Document specified encoding is not supported. Fall back on preliminary encoding.
+    			documentSpecifiedEncodingInfoSuffix="encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document is not supported";
+    			if (logger.isWarnEnabled()) logger.warn("Unsupported encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document, using preliminary encoding "+safePreliminaryEncoding+" instead");
+            } catch (IllegalCharsetNameException ex) {
+               documentSpecifiedEncodingInfoSuffix="illegal encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document";
+               if (logger.isWarnEnabled()) logger.warn("Illegal encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document, using preliminary encoding "+safePreliminaryEncoding+" instead");
+            }
 		}
 		// Document does not look like XML, does not specify an encoding in its transport protocol, has no BOM, and does not specify an encoding in the document itself.
 		// The HTTP protocol states that such a situation should assume ISO-8859-1 encoding.
@@ -158,4 +160,12 @@ final class EncodingDetector {
 		}
 		return new Source(new InputStreamReader(new ByteArrayInputStream(bytes,0,i),previewEncoding),null);
 	}
+
+    static boolean isEncodingSupported(String encoding) {
+        try {
+            return Charset.isSupported(encoding);
+        } catch (IllegalCharsetNameException ex) {
+            return false;
+        }
+    }
 }

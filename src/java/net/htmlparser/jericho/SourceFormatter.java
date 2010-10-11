@@ -358,7 +358,7 @@ public final class SourceFormatter implements CharStreamSource {
 		private boolean inlinable(final Element element) {
 			// returns true if the specified element should be inlined
 			final StartTagType startTagType=element.getStartTag().getStartTagType();
-			if (startTagType==StartTagType.DOCTYPE_DECLARATION) return false;
+			// if (startTagType==StartTagType.DOCTYPE_DECLARATION) return false; // this was removed because it caused an extra line break if the DOCTYPE is preceeded by a server tag
 			if (startTagType!=StartTagType.NORMAL) return true;
 			// element is a normal type
 			final String elementName=element.getName();

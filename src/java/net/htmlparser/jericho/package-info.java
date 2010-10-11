@@ -1,5 +1,5 @@
 /**
- * <h3>Jericho HTML Parser 3.1</h3>
+ * <h3>Jericho HTML Parser 3.2-dev</h3>
  * <p>
  * A java library allowing analysis and manipulation of parts of an HTML document, including server-side tags,
  * while reproducing verbatim any unrecognised or invalid HTML.

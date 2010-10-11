@@ -1,5 +1,5 @@
 @if defined JERICHO_JDK_HOME echo JERICHO_JDK_HOME is set to %JERICHO_JDK_HOME%
-set version=3.1
+set version=3.2-dev
 @set package_name=jericho-html-%version%
 @set dependencies=compile-time-dependencies\slf4j-api-1.5.6.jar;compile-time-dependencies\commons-logging-api-1.1.1.jar;compile-time-dependencies\log4j-api-1.2.15.jar
 
@@ -20,8 +20,8 @@ set version=3.1
 @md dist
 
 rem ----- Compile source:
-"%JERICHO_JAVAC_EXE%" -Xlint:unchecked -g:none -classpath %dependencies% -d classes src\java\net\htmlparser\jericho\*.java src\java\net\htmlparser\jericho\nodoc\*.java
-@rem *** "%JERICHO_JAVAC_EXE%" -Xlint:unchecked -g -classpath %dependencies% -d classes src\java\net\htmlparser\jericho\*.java src\java\net\htmlparser\jericho\nodoc\*.java
+@rem *** "%JERICHO_JAVAC_EXE%" -source 1.5 -target 1.5 -Xlint:unchecked -g:none -classpath %dependencies% -d classes src\java\net\htmlparser\jericho\*.java src\java\net\htmlparser\jericho\nodoc\*.java
+"%JERICHO_JAVAC_EXE%" -source 1.5 -target 1.5 -Xlint:unchecked -g -classpath %dependencies% -d classes src\java\net\htmlparser\jericho\*.java src\java\net\htmlparser\jericho\nodoc\*.java
 @if errorlevel 1 goto end
 
 rem ----- Create jar library:
@@ -38,7 +38,7 @@ rem ----- Build the command line samples:
 :buildsamples
 @if exist samples\console\classes rd /s/q samples\console\classes
 @md samples\console\classes
-"%JERICHO_JAVAC_EXE%" -Xlint:unchecked -g -deprecation -classpath dist/%package_name%.jar -d samples\console\classes samples\console\src\*.java
+"%JERICHO_JAVAC_EXE%" -source 1.5 -target 1.5 -Xlint:unchecked -g -deprecation -classpath dist/%package_name%.jar -d samples\console\classes samples\console\src\*.java
 @if errorlevel 1 goto end
 @if not exist samples\console\bat_lib md samples\console\bat_lib
 @echo @set package_name=%package_name%> samples\console\bat_lib\set_package_name.bat
