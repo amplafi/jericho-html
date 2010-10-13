@@ -367,6 +367,7 @@ public final class SourceFormatter implements CharStreamSource {
 			if (!HTMLElements.getInlineLevelElementNames().contains(elementName)) return false;
 			// element is inline type
 			if (removeLineBreaks) return true;
+			if (elementName==HTMLElementName.TEXTAREA) return false; // TEXTAREA is theoretically inlinable but we want to format its content in the same was as PRE, and this is easiest when the entire element is treated like a block PRE element.
 			return containsOnlyInlineLevelChildElements(element); // only inline if it doesn't illegally contain non-inline elements
 		}
 	

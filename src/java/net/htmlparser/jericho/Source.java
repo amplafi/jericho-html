@@ -112,7 +112,7 @@ public final class Source extends Segment implements Iterable<Segment> {
 		cache=new Cache(this);
 	}
 
-	private Source(final EncodingDetector encodingDetector) throws IOException {
+	public Source(final EncodingDetector encodingDetector) throws IOException {
 		this(getString(encodingDetector));
 		encoding=encodingDetector.getEncoding();
 		encodingSpecificationInfo=encodingDetector.getEncodingSpecificationInfo();

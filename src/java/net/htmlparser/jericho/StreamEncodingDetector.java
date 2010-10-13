@@ -93,7 +93,7 @@ final class StreamEncodingDetector {
 		this.inputStream=inputStream.markSupported() ? inputStream : new BufferedInputStream(inputStream);
 		init();
 	}
-	
+
 	public InputStream getInputStream() {
 		return inputStream;
 	}

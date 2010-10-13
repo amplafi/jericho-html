@@ -24,7 +24,7 @@ import java.io.*;
 import java.nio.charset.*;
 import java.net.*;
 
-final class EncodingDetector {
+public final class EncodingDetector {
 	private final InputStream inputStream;
 	private String encoding;
 	private String encodingSpecificationInfo;
@@ -37,6 +37,7 @@ final class EncodingDetector {
 
 	private static final String UTF_8="UTF-8";
 	private static final String ISO_8859_1="ISO-8859-1";
+	
 
 	public EncodingDetector(final URLConnection urlConnection) throws IOException {
 		this(new StreamEncodingDetector(urlConnection));
@@ -45,7 +46,6 @@ final class EncodingDetector {
 	public EncodingDetector(final InputStream inputStream) throws IOException {
 		this(new StreamEncodingDetector(inputStream));
 	}
-
 	public EncodingDetector(final InputStream inputStream, final String preliminaryEncoding) throws IOException {
 		this(inputStream,preliminaryEncoding,"preliminary encoding set explicitly",null);
 		logger=new LoggerQueue();
