@@ -599,8 +599,10 @@ public abstract class Tag extends Segment {
 					registeredTagCount++;
 					if (tag instanceof StartTag) registeredStartTagCount++;
 				}
-				// Look for next tag after end of next tag if we're assuming tags don't appear inside other tags, as long as the last tag found was not an unregistered tag:
-				final int pos=(assumeNoNestedTags && !tag.isUnregistered()) ? tag.end : tag.begin+1;
+				// Look for next tag after end of next tag if either:
+				//   - this is a server comment (which doesn't allow any other tags within it)
+				//   - or we're assuming tags don't appear inside other tags, as long as the last tag found was not an unregistered tag:
+				final int pos=(tag.getTagType()==StartTagType.SERVER_COMMON_COMMENT || (assumeNoNestedTags && !tag.isUnregistered())) ? tag.end : tag.begin+1;
 				if (pos==source.end) break;
 				tag=parseAllgetNextTag(source,parseText,pos,assumeNoNestedTags);
 			}
@@ -637,7 +639,7 @@ public abstract class Tag extends Segment {
 						if (tag.end>source.fullSequentialParseData[0]
 								&& tagType!=StartTagType.DOCTYPE_DECLARATION
 								&& tagType!=StartTagType.UNREGISTERED && tagType!=EndTagType.UNREGISTERED) {
-							source.fullSequentialParseData[0]=(tagType==StartTagType.NORMAL && tag.name==HTMLElementName.SCRIPT) ? Integer.MAX_VALUE : tag.end;
+							source.fullSequentialParseData[0]=(tagType==StartTagType.NORMAL && tag.name==HTMLElementName.SCRIPT && !((StartTag)tag).isEmptyElementTag()) ? Integer.MAX_VALUE : tag.end;
 						}
 					}
 					return tag;

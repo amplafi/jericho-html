@@ -191,6 +191,13 @@ public final class MasonTagTypes {
 		for (TagType tagType : TAG_TYPES) tagType.register();
 	}
 
+	/** 
+	 * {@linkplain TagType#deregister() Deregisters} all of the tag types defined in this class at once.
+	 */
+	public static void deregister() {
+		for (TagType tagType : TAG_TYPES) tagType.deregister();
+	}
+
 	/**
 	 * Indicates whether the specified tag type is defined in this class.
 	 *

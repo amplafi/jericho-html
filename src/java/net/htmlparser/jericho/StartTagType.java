@@ -337,8 +337,8 @@ public abstract class StartTagType extends TagType {
 	 * <a target="_blank" href="http://www.rubycentral.com/book/web.html#S2">eRuby</a>, and
 	 * <a target="_blank" href="http://www.masonbook.com/book/chapter-2.mhtml#CHP-2-SECT-3.1">Mason substitution</a> tags.
 	 * <p>
-	 * This tag and the {@linkplain #SERVER_COMMON_ESCAPED escaped common server tag} are the only <a href="TagType.html#Standard">standard</a> tag types
-	 * that define {@linkplain #isServerTag() server tags}.
+	 * This tag, the {@linkplain #SERVER_COMMON_ESCAPED escaped common server tag} and the {@linkplain #SERVER_COMMON_COMMENT common server comment tag}
+	 * are the only <a href="TagType.html#Standard">standard</a> tag types that define {@linkplain #isServerTag() server tags}.
 	 * They are included as standard tag types because of the common server tag's widespread use in many platforms, including those listed above.
 	 * <p>
 	 * <dl>
@@ -390,6 +390,33 @@ public abstract class StartTagType extends TagType {
 	public static final StartTagType SERVER_COMMON_ESCAPED=StartTagTypeServerCommonEscaped.INSTANCE;
 
 	/**
+	 * The tag type given to a common server comment tag
+	 * (<code>&lt;%---<var> &#46;&#46;&#46; </var>--%&gt;</code>).
+	 * <p>
+	 * Some of the platforms that support the {@linkplain #SERVER_COMMON common server tag}, such as JSP, also support a server based comment tag
+	 * that allow nested server tags.
+	 * <p>
+	 * <dl>
+	 *  <dt>Properties:</dt>
+	 *   <dd>
+	 *    <table class="bordered" style="margin: 15px" cellspacing="0">
+	 *     <tr><th>Property<th>Value
+	 *     <tr><td>{@link #getDescription() Description}<td>common server comment tag
+	 *     <tr><td>{@link #getStartDelimiter() StartDelimiter}<td><code>&lt;%--</code>
+	 *     <tr><td>{@link #getClosingDelimiter() ClosingDelimiter}<td><code>--%&gt;</code>
+	 *     <tr><td>{@link #isServerTag() IsServerTag}<td><code>true</code>
+	 *     <tr><td>{@link #getNamePrefix() NamePrefix}<td><code>%--</code>
+	 *     <tr><td>{@link #getCorrespondingEndTagType() CorrespondingEndTagType}<td><code>null</code>
+	 *     <tr><td>{@link #hasAttributes() HasAttributes}<td><code>false</code>
+	 *     <tr><td>{@link #isNameAfterPrefixRequired() IsNameAfterPrefixRequired}<td><code>false</code>
+	 *    </table>
+	 *  <dt>Example:</dt>
+	 *   <dd><code>&lt;%-- this server side comment contains a <%="nested"%> server tag --%&gt;</code></dd>
+	 * </dl>
+	 */
+	public static final StartTagType SERVER_COMMON_COMMENT=StartTagTypeServerCommonComment.INSTANCE;
+
+	/**
 	 * Constructs a new <code>StartTagType</code> object with the specified properties.
 	 * <br />(<a href="TagType.html#ImplementationAssistance">implementation assistance</a> method)
 	 * <p>
@@ -436,6 +463,7 @@ public abstract class StartTagType extends TagType {
 	 *     <tr><td>{@link StartTagType#CDATA_SECTION}<td><code>null</code>
 	 *     <tr><td>{@link StartTagType#SERVER_COMMON}<td><code>null</code>
 	 *     <tr><td>{@link StartTagType#SERVER_COMMON_ESCAPED}<td><code>null</code>
+	 *     <tr><td>{@link StartTagType#SERVER_COMMON_COMMENT}<td><code>null</code>
 	 *    </table>
 	 * </dl>
 	 * <dl>
@@ -492,6 +520,7 @@ public abstract class StartTagType extends TagType {
 	 *     <tr><td>{@link StartTagType#CDATA_SECTION}<td><code>false</code>
 	 *     <tr><td>{@link StartTagType#SERVER_COMMON}<td><code>false</code>
 	 *     <tr><td>{@link StartTagType#SERVER_COMMON_ESCAPED}<td><code>false</code>
+	 *     <tr><td>{@link StartTagType#SERVER_COMMON_COMMENT}<td><code>false</code>
 	 *    </table>
 	 * </dl>
 	 * <dl>
@@ -546,6 +575,7 @@ public abstract class StartTagType extends TagType {
 	 *     <tr><td>{@link StartTagType#CDATA_SECTION}<td><code>false</code>
 	 *     <tr><td>{@link StartTagType#SERVER_COMMON}<td><code>false</code>
 	 *     <tr><td>{@link StartTagType#SERVER_COMMON_ESCAPED}<td><code>false</code>
+	 *     <tr><td>{@link StartTagType#SERVER_COMMON_COMMENT}<td><code>false</code>
 	 *    </table>
 	 * </dl>
 	 * <dl>

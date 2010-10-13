@@ -31,6 +31,7 @@ final class EncodingDetector {
 	private final String preliminaryEncoding;
 	private final String preliminaryEncodingSpecificationInfo;
 	private final String alternativePreliminaryEncoding;
+	private LoggerQueue logger;
 	
 	private static final int PREVIEW_BYTE_COUNT=2048;
 
@@ -47,6 +48,7 @@ final class EncodingDetector {
 
 	public EncodingDetector(final InputStream inputStream, final String preliminaryEncoding) throws IOException {
 		this(inputStream,preliminaryEncoding,"preliminary encoding set explicitly",null);
+		logger=new LoggerQueue();
 		if (!isEncodingSupported(preliminaryEncoding)) throw new UnsupportedEncodingException(preliminaryEncoding+" specified as preliminaryEncoding constructor argument");
 		detectDocumentSpecifiedEncoding();
 	}
@@ -57,6 +59,7 @@ final class EncodingDetector {
 
 	private EncodingDetector(final StreamEncodingDetector streamEncodingDetector, final String alternativePreliminaryEncoding) throws IOException {
 		this(streamEncodingDetector.getInputStream(),streamEncodingDetector.getEncoding(),streamEncodingDetector.getEncodingSpecificationInfo(),alternativePreliminaryEncoding);
+		logger=streamEncodingDetector.getLoggerQueue();
 		if (streamEncodingDetector.isDifinitive() || !streamEncodingDetector.isDocumentSpecifiedEncodingPossible()) {
 			// don't try to detect the encoding from the document because there is no need or it is not possible
 			setEncoding(preliminaryEncoding,preliminaryEncodingSpecificationInfo);
@@ -66,6 +69,7 @@ final class EncodingDetector {
 	}
 	
 	private EncodingDetector(final InputStream inputStream, final String preliminaryEncoding, final String preliminaryEncodingSpecificationInfo, final String alternativePreliminaryEncoding) throws IOException {
+		logger=new LoggerQueue();
 		this.inputStream=inputStream.markSupported() ? inputStream : new BufferedInputStream(inputStream);
 		this.preliminaryEncoding=preliminaryEncoding;
 		this.preliminaryEncodingSpecificationInfo=preliminaryEncodingSpecificationInfo;
@@ -93,6 +97,10 @@ final class EncodingDetector {
 		return preliminaryEncodingSpecificationInfo;
 	}
 
+	public LoggerQueue getLoggerQueue() {
+		return logger;
+	}
+
 	public Reader openReader() throws UnsupportedEncodingException {
 		if (encoding==null) return new InputStreamReader(inputStream,ISO_8859_1); // encoding==null only if input stream is empty so use an arbitrary encoding.
 		if (!isEncodingSupported(encoding)) throw new UnsupportedEncodingException(encoding+": "+encodingSpecificationInfo);
@@ -116,7 +124,7 @@ final class EncodingDetector {
 		}
 		final Source previewSource=getPreviewSource(safePreliminaryEncoding); // should never throw UnsupportedEncodingException
 		inputStream.reset();
-		final Logger logger=previewSource.getLogger();
+		//final Logger logger=previewSource.getLogger(); // replaced with loggerQueue
 		previewSource.setLogger(null);
 		if (preliminaryEncoding!=safePreliminaryEncoding && logger.isWarnEnabled())
 			logger.warn("Alternative encoding "+safePreliminaryEncoding+" substituted for unsupported preliminary encoding "+preliminaryEncoding+": "+preliminaryEncodingSpecificationInfo);
@@ -131,16 +139,16 @@ final class EncodingDetector {
 			}
 			documentSpecifiedEncodingInfoSuffix="no encoding specified in document";
 		} else {
-		    try {
-    			if (isEncodingSupported(previewSource.getDocumentSpecifiedEncoding()))
-    				return setEncoding(previewSource.getDocumentSpecifiedEncoding(),previewSource.getEncodingSpecificationInfo());
-    			// Document specified encoding is not supported. Fall back on preliminary encoding.
-    			documentSpecifiedEncodingInfoSuffix="encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document is not supported";
-    			if (logger.isWarnEnabled()) logger.warn("Unsupported encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document, using preliminary encoding "+safePreliminaryEncoding+" instead");
-            } catch (IllegalCharsetNameException ex) {
-               documentSpecifiedEncodingInfoSuffix="illegal encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document";
-               if (logger.isWarnEnabled()) logger.warn("Illegal encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document, using preliminary encoding "+safePreliminaryEncoding+" instead");
-            }
+			try {
+				if (isEncodingSupported(previewSource.getDocumentSpecifiedEncoding()))
+					return setEncoding(previewSource.getDocumentSpecifiedEncoding(),previewSource.getEncodingSpecificationInfo());
+				// Document specified encoding is not supported. Fall back on preliminary encoding.
+				documentSpecifiedEncodingInfoSuffix="encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document is not supported";
+				if (logger.isWarnEnabled()) logger.warn("Unsupported encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document, using preliminary encoding "+safePreliminaryEncoding+" instead");
+			} catch (IllegalCharsetNameException ex) {
+				documentSpecifiedEncodingInfoSuffix="illegal encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document";
+				if (logger.isWarnEnabled()) logger.warn("Illegal encoding "+previewSource.getDocumentSpecifiedEncoding()+" specified in document, using preliminary encoding "+safePreliminaryEncoding+" instead");
+			}
 		}
 		// Document does not look like XML, does not specify an encoding in its transport protocol, has no BOM, and does not specify an encoding in the document itself.
 		// The HTTP protocol states that such a situation should assume ISO-8859-1 encoding.
@@ -161,11 +169,11 @@ final class EncodingDetector {
 		return new Source(new InputStreamReader(new ByteArrayInputStream(bytes,0,i),previewEncoding),null);
 	}
 
-    static boolean isEncodingSupported(String encoding) {
-        try {
-            return Charset.isSupported(encoding);
-        } catch (IllegalCharsetNameException ex) {
-            return false;
-        }
-    }
+	static boolean isEncodingSupported(String encoding) {
+		try {
+			return Charset.isSupported(encoding);
+		} catch (IllegalCharsetNameException ex) {
+			return false;
+		}
+	}
 }

@@ -406,21 +406,26 @@ public abstract class TagType {
 	 * Indicates whether a tag of this type is valid in the specified position of the specified source document.
 	 * <br />(<a href="TagType.html#ImplementationAssistance">implementation assistance</a> method)
 	 * <p>
-	 * This method is called immediately before {@link #constructTagAt(Source, int pos)}
+	 * This method is called immediately before {@link #constructTagAt(Source, int)}
 	 * to do a preliminary check on the validity of a tag of this type in the specified position.
 	 * <p>
-	 * This check is not performed as part of the {@link #constructTagAt(Source, int pos)} call because the same
+	 * This check is not performed as part of the {@link #constructTagAt(Source, int)} call because the same
 	 * validation is used for all the <a href="TagType.html#Standard">standard</a> tag types, and is likely to be sufficient
 	 * for all <a href="TagType.html#Custom">custom tag types</a>.
 	 * Having this check separated into a different method helps to isolate common code from the code that is unique to each tag type.
 	 * <p>
-	 * In theory, a {@linkplain TagType#isServerTag() server tag} is valid in any position, but a non-server tag is not valid inside any other tag,
-	 * nor inside elements with CDATA content such as {@link HTMLElementName#SCRIPT SCRIPT} and {@link HTMLElementName#STYLE STYLE} elements.
+	 * A {@linkplain TagType#isServerTag() server tag} is valid in any position except inside a {@linkplain StartTagType#SERVER_COMMON_COMMENT server-side comment},
+	 * but a non-server tag is not valid inside any other tag, nor inside elements with CDATA content such as
+	 * {@link HTMLElementName#SCRIPT SCRIPT} and {@link HTMLElementName#STYLE STYLE} elements.
 	 * <p>
-	 * The common implementation of this method always returns <code>true</code> for server tags, but for non-server tags it behaves slightly differently
-	 * depending upon whether or not a {@linkplain Source#fullSequentialParse() full sequential parse} is being peformed.
+	 * The common implementation of this method behaves differently depending upon whether or not a {@linkplain Source#fullSequentialParse() full sequential parse}
+	 * is being peformed.
 	 * <p>
-	 * When this method is called during a full sequential parse, the <code>fullSequentialParseData</code> argument contains information
+	 * For server tags it simply checks that the position is not enclosed by a {@linkplain StartTagType#SERVER_COMMON_COMMENT server-side comment} if a full sequential parse
+	 * is not being performed.  If a full sequential parse is being performed, it always returns <code>true</code> for server tags as the parser automatically skips over
+	 * all positions enclosed by server-side comments, so this method is only called in positions where a server tag is always valid.
+	 * <p>
+	 * When this method is called for non-server tags during a full sequential parse, the <code>fullSequentialParseData</code> argument contains information
 	 * allowing the exact theoretical check to be performed, rejecting a non-server tag if it is inside any other tag.
 	 * See below for further information about the <code>fullSequentialParseData</code> parameter.
 	 * <p>
@@ -488,7 +493,11 @@ public abstract class TagType {
 	 * @return <code>true</code> if a tag of this type is valid in the specified position of the specified source document, otherwise <code>false</code>.
 	 */
 	protected boolean isValidPosition(final Source source, final int pos, final int[] fullSequentialParseData) {
-		if (isServerTag()) return true;
+		if (isServerTag()) {
+			// the only thing preventing inclusion of a server tag is if it is enclosed by a server comment.
+			if (fullSequentialParseData!=null) return true; // full sequential parse skips over segments enclosed by server comments so no need to check.
+			return !StartTagType.SERVER_COMMON_COMMENT.tagEncloses(source,pos);
+		}
 		if (fullSequentialParseData!=null) {
 			// use simplified check when doing full sequential parse.  Normally we are only able to check whether a tag is inside specially cached
 			// tag types for efficiency reasons, but during a full sequential parse we can reject a tag if it is inside any other tag.
@@ -530,11 +539,11 @@ public abstract class TagType {
 	 * The tag types returned by this property (referred to in the following paragraphs as the "listed types") default to
 	 * {@link StartTagType#COMMENT} and {@link StartTagType#CDATA_SECTION}.
 	 * <p>
-	 * This property is used by the default implementation of the {@link #isValidPosition(Source, int pos, int[] fullSequentialParseData) isValidPosition} method
+	 * This property is used by the default implementation of the {@link #isValidPosition(Source, int, int[]) isValidPosition} method
 	 * in <a href="Source.html#ParseOnDemand">parse on demand</a> mode.
 	 * It is not used at all during a {@linkplain Source#fullSequentialParse() full sequential parse}.
 	 * <p>
-	 * In the default implementation of the {@link #isValidPosition(Source, int pos, int[] fullSequentialParseData) isValidPosition} method,
+	 * In the default implementation of the {@link #isValidPosition(Source, int, int[]) isValidPosition} method,
 	 * in <a href="Source.html#ParseOnDemand">parse on demand</a> mode,
 	 * every new non-server tag found by the parser (referred to as a "new tag") undergoes a check to see whether it is enclosed
 	 * by a tag of one of the listed types.
@@ -634,7 +643,7 @@ public abstract class TagType {
 	 * This is logically equivalent to <code>source.</code>{@link Source#getEnclosingTag(int,TagType) getEnclosingTag(pos,this)}<code>!=null</code>,
 	 * but is safe to use within other implementation methods without the risk of causing an infinite recursion.
 	 * <p>
-	 * This method is called from the default implementation of the {@link #isValidPosition(Source, int pos, int[] fullSequentialParseData)} method.
+	 * This method is called from the default implementation of the {@link #isValidPosition(Source, int, int[])} method.
 	 *
 	 * @param source  the {@link Source} document.
 	 * @param pos  the character position in the source document to check.

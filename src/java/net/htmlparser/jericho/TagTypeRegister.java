@@ -41,6 +41,7 @@ final class TagTypeRegister {
 		StartTagType.XML_DECLARATION,
 		StartTagType.SERVER_COMMON,
 		StartTagType.SERVER_COMMON_ESCAPED,
+		StartTagType.SERVER_COMMON_COMMENT,
 		EndTagType.UNREGISTERED,
 		EndTagType.NORMAL
 	};

@@ -20,7 +20,6 @@
 
 package net.htmlparser.jericho;
 
-import java.util.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.net.*;
@@ -36,6 +35,7 @@ final class StreamEncodingDetector {
 	private String encodingSpecificationInfo=null;
 	private boolean definitive=true;
 	private boolean documentSpecifiedEncodingPossible=true;
+	private final LoggerQueue logger=new LoggerQueue();
 	
 	private static final String UTF_16="UTF-16";
 	private static final String UTF_16BE="UTF-16BE";
@@ -56,16 +56,33 @@ final class StreamEncodingDetector {
 	private static final String UTF_32LE="UTF-32LE";
 
 	public StreamEncodingDetector(final URLConnection urlConnection) throws IOException {
-		final HttpURLConnection httpURLConnection=(urlConnection instanceof HttpURLConnection) ? (HttpURLConnection)urlConnection : null;
 		// urlConnection.setRequestProperty("Accept-Charset","UTF-8, ISO-8859-1;q=0"); // used for debugging
 		final InputStream urlInputStream=urlConnection.getInputStream();
 		final String contentType=urlConnection.getContentType();
 		if (contentType!=null) {
 			encoding=Source.getCharsetParameterFromHttpHeaderValue(contentType);
-			if (encoding!=null) {
-				inputStream=urlInputStream;
-				encodingSpecificationInfo="HTTP header Content-Type: "+contentType;
-				return;
+			if (encoding!=null && encoding.length()>0) {
+				boolean encodingSupported=false;
+				try {
+					if (Charset.isSupported(encoding)) encodingSupported=true;
+				} catch (IllegalCharsetNameException ex) {
+					if (encoding.charAt(0)=='"') {
+						String encodingWithoutQuotes=encoding.replace("\"","");
+						if (EncodingDetector.isEncodingSupported(encodingWithoutQuotes)) {
+							logger.warn("Encoding "+encoding+" specified in HTTP header is illegaly delimited with double quotes, which have been ignored");
+							encodingSupported=true;
+						} else {
+							logger.warn("Encoding "+encoding+" specified in HTTP header is illegaly delimited with double quotes");
+						}
+						encoding=encodingWithoutQuotes;
+					}
+				}
+				if (encodingSupported) {
+					inputStream=urlInputStream;
+					encodingSpecificationInfo="HTTP header Content-Type: "+contentType;
+					return;
+				}
+				logger.warn("Encoding "+encoding+" specified in HTTP header is not supported, attempting other means of detection");
 			}
 		}
 		inputStream=urlInputStream.markSupported() ? urlInputStream : new BufferedInputStream(urlInputStream);
@@ -97,9 +114,13 @@ final class StreamEncodingDetector {
 		return documentSpecifiedEncodingPossible;
 	}
 
+	public LoggerQueue getLoggerQueue() {
+		return logger;
+	}
+
 	public Reader openReader() throws UnsupportedEncodingException {
 		if (encoding==null) return new InputStreamReader(inputStream,ISO_8859_1); // encoding==null only if input stream is empty so use an arbitrary encoding.
-		if (!Charset.isSupported(encoding)) throw new UnsupportedEncodingException(encoding+" - "+encodingSpecificationInfo);
+		if (!EncodingDetector.isEncodingSupported(encoding)) throw new UnsupportedEncodingException(encoding+" - "+encodingSpecificationInfo);
 		return new InputStreamReader(inputStream,encoding);
 	}
 
@@ -184,7 +205,7 @@ final class StreamEncodingDetector {
 			// pattern X?X0
 			return setEncoding(UTF_16LE,"default 16-bit LE encoding (byte stream stars with pattern XX ?? XX 00)"); // Regardless of the second byte, assume the fourth 00 byte indicates UTF-16LE.
 		}
-		// pattern X??X   
+		// pattern X??X
 		if (b2==0) {
 			// pattern X0?X
 			// Assuming the second 00 byte doesn't indicate a NUL character, and that it is very unlikely that this is a 32-bit encoding
@@ -197,13 +218,13 @@ final class StreamEncodingDetector {
 		}
 		// pattern XX?X
 		if (b3==0) return setEncoding(UTF_16BE,"default 16-bit BE encoding (byte stream starts with pattern XX XX 00 XX)"); // pattern XX0X likely to indicate a 16-bit BE encoding with the first character > U+00FF.
-		// pattern XXXX 
+		// pattern XXXX
 		// Although it is still possible that this is a 16-bit encoding with the first two characters > U+00FF
 		// Assume the more likely case of four 8-bit characters <= U+00FF.
 		// Check whether it fits some common EBCDIC strings that might be found at the start of a document:
 		if (b1==0x4C) { // first character is EBCDIC '<' (ASCII 'L'), check a couple more characters before assuming EBCDIC encoding:
-			if (b2==0x6F && b3==0xA7 && b4==0x94) return setEncoding(EBCDIC,"default EBCDIC encoding (<?xml...> detected)"); // first four bytes are "<?xm" in EBCDIC ("Lo��" in Windows-1252)
-			if (b2==0x5A && b3==0xC4 && b4==0xD6) return setEncoding(EBCDIC,"default EBCDIC encoding (<!DOCTYPE...> detected)"); // first four bytes are "<!DO" in EBCDIC ("LZ��" in Windows-1252)
+			if (b2==0x6F && b3==0xA7 && b4==0x94) return setEncoding(EBCDIC,"default EBCDIC encoding (<?xml...> detected)"); // first four bytes are "<?xm" in EBCDIC ("Lo" in Windows-1252)
+			if (b2==0x5A && b3==0xC4 && b4==0xD6) return setEncoding(EBCDIC,"default EBCDIC encoding (<!DOCTYPE...> detected)"); // first four bytes are "<!DO" in EBCDIC ("LZ" in Windows-1252)
 			if ((b2&b3&b4&0x80)!=0) return setEncoding(EBCDIC,"default EBCDIC-compatible encoding (HTML element detected)"); // all of the 3 bytes after the '<' have the high-order bit set, indicating EBCDIC letters such as "<HTM" ("L���" in Windows-1252), or "<htm" ("L���" in Windows-1252)
 			// although this is not an exhaustive check for EBCDIC, it is safer to assume a more common preliminary encoding if none of these conditions are met.
 		}

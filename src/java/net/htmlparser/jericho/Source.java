@@ -97,7 +97,8 @@ public final class Source extends Segment implements Iterable<Segment> {
 	private static final String LF="\n";
 	private static final String CRLF="\r\n";
 
-	static final String PACKAGE_NAME=Source.class.getPackage().getName(); // "net.htmlparser.jericho"
+	static final String PACKAGE_NAME="net.htmlparser.jericho"; // Source.class.getPackage().getName(); // latter doesn't work in some secure environments.
+
 	private HtmlIssueProcessingHandler htmlIssueProcessingHandler = new DefaultHtmlProcessingHandler(this);
 
 	/**
@@ -116,6 +117,7 @@ public final class Source extends Segment implements Iterable<Segment> {
 		encoding=encodingDetector.getEncoding();
 		encodingSpecificationInfo=encodingDetector.getEncodingSpecificationInfo();
 		preliminaryEncodingInfo=encodingDetector.getPreliminaryEncoding()+": "+encodingDetector.getPreliminaryEncodingSpecificationInfo();
+		encodingDetector.getLoggerQueue().outputTo(logger);
 	}
 
 	Source(final Reader reader, final String encoding) throws IOException {
@@ -1629,6 +1631,7 @@ public final class Source extends Segment implements Iterable<Segment> {
 		} catch (IOException ex) {
 			try {
 				Logger logger=newLogger();
+				encodingDetector.getLoggerQueue().outputTo(logger);
 				if (logger.isInfoEnabled()) logger.info("IOException constructing encoded source. Encoding: "+encodingDetector.getEncoding()+" - "+encodingDetector.getEncodingSpecificationInfo()+". PreliminaryEncoding: "+encodingDetector.getPreliminaryEncoding()+" - "+encodingDetector.getPreliminaryEncodingSpecificationInfo());
 			} catch (Exception ex2) {} // make sure attempting to log does not cause a new exception
 			throw ex;

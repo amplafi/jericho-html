@@ -726,8 +726,7 @@ public abstract class CharacterReference extends Segment {
 
 	private static Appendable appendDecode(final Appendable appendable, final CharSequence encodedText, int pos, final boolean insideAttributeValue, final boolean convertNonBreakingSpaces) throws IOException {
 		final Config.UnterminatedCharacterReferenceSettings unterminatedCharacterReferenceSettings=Config.CurrentCompatibilityMode.getUnterminatedCharacterReferenceSettings(insideAttributeValue);
-		int lastEnd=0;
-		final StreamedSource streamedSource=new StreamedSource(encodedText).setHandleTags(false).setSearchBegin(pos);
+		final StreamedSource streamedSource=new StreamedSource(encodedText).setHandleTags(false).setUnterminatedCharacterReferenceSettings(unterminatedCharacterReferenceSettings).setSearchBegin(pos);
 		for (Segment segment : streamedSource) {
 			if (segment instanceof CharacterReference) {
 				((CharacterReference)segment).appendCharTo(appendable,convertNonBreakingSpaces);

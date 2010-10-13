@@ -26,7 +26,10 @@ import java.util.*;
  * Contains {@linkplain TagType tag types} recognised exclusively by Microsoft&reg; Internet Explorer.
  * <p>
  * The tag type defined in this class is not {@linkplain TagType#register() registered} by default.
+ *
+ * @deprecated  Use the tag types defined in {@link MicrosoftConditionalCommentTagTypes} instead.
  */
+@Deprecated
 public final class MicrosoftTagTypes {
 
 	/**
@@ -63,6 +66,7 @@ public final class MicrosoftTagTypes {
 	 *  <dt>Example:</dt>
 	 *   <dd><code>&lt;![if !IE]&gt;</code></dd>
 	 * </dl>
+	 * @deprecated  Use {@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF} and {@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF} instead.
 	 */
 	public static final StartTagType DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT=StartTagTypeMicrosoftDownlevelRevealedConditionalComment.INSTANCE;
 
@@ -101,6 +105,13 @@ public final class MicrosoftTagTypes {
 	 */
 	public static void register() {
 		for (TagType tagType : TAG_TYPES) tagType.register();
+	}
+
+	/** 
+	 * {@linkplain TagType#deregister() Deregisters} all of the tag types defined in this class at once.
+	 */
+	public static void deregister() {
+		for (TagType tagType : TAG_TYPES) tagType.deregister();
 	}
 	
 	/**

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.io.Closeable;
 import java.io.Reader;
+import java.io.Writer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -121,6 +122,7 @@ public final class StreamedSource implements Iterable<Segment>, Closeable {
 	private final boolean automaticClose;
 	private boolean coalescing=false;
 	private boolean handleTags=true;
+	private Config.UnterminatedCharacterReferenceSettings unterminatedCharacterReferenceSettings=Config.CurrentCompatibilityMode.getUnterminatedCharacterReferenceSettings(false);
 	private boolean isInitialised=false;
 	private Segment currentSegment=null;
 	private Segment nextParsedSegment=START_SEGMENT;
@@ -258,7 +260,7 @@ public final class StreamedSource implements Iterable<Segment>, Closeable {
 	/**
 	 * Specifies whether an unbroken section of <a href="#PlainText">plain text</a> in the source document should always be coalesced into a single {@link Segment} by the {@linkplain #iterator() iterator}.
 	 * <p>
-	 * If this property is set to the default value of <code>false</code>, 
+	 * If this property is set to the <b>default</b> value of <code>false</code>, 
 	 * and a section of plain text is encountered in the document that is larger than the current {@linkplain #getBufferSize() buffer size},
 	 * the text is <i>chunked</i> into multiple consecutive plain text segments in order to minimise memory usage.
 	 * <p>
@@ -560,6 +562,11 @@ public final class StreamedSource implements Iterable<Segment>, Closeable {
 		return this;
 	}
 
+	StreamedSource setUnterminatedCharacterReferenceSettings(final Config.UnterminatedCharacterReferenceSettings unterminatedCharacterReferenceSettings) {
+		this.unterminatedCharacterReferenceSettings=unterminatedCharacterReferenceSettings;
+		return this;
+	}
+
 	StreamedSource setSearchBegin(final int begin) {
 		if (isInitialised) throw new IllegalStateException("setSearchBegin() can only be called before iterator() is called");
 		final int segmentEnd=begin-1;
@@ -583,6 +590,7 @@ public final class StreamedSource implements Iterable<Segment>, Closeable {
 	private class StreamedSourceIterator implements Iterator<Segment> {
 		private final boolean coalescing;
 		private final boolean handleTags;
+		private Config.UnterminatedCharacterReferenceSettings unterminatedCharacterReferenceSettings;
 		private Segment nextSegment;
 		private int plainTextSegmentBegin=0;
 		private final char[] charByRef=new char[1]; // used to pass a single character by reference
@@ -590,6 +598,7 @@ public final class StreamedSource implements Iterable<Segment>, Closeable {
 		public StreamedSourceIterator() {
 			coalescing=StreamedSource.this.coalescing;
 			handleTags=StreamedSource.this.handleTags;
+			unterminatedCharacterReferenceSettings=StreamedSource.this.unterminatedCharacterReferenceSettings;
 			loadNextParsedSegment();
 			isXML=isXML(nextParsedSegment);
 		}
@@ -621,13 +630,15 @@ public final class StreamedSource implements Iterable<Segment>, Closeable {
 	
 		private final Segment findNextParsedSegment() {
 			try {
-				int i=nextParsedSegment.getBegin()+1;
+				int i=(nextParsedSegment instanceof StartTag && ((StartTag)nextParsedSegment).getTagType()==StartTagType.SERVER_COMMON_COMMENT)
+					? nextParsedSegment.getEnd()
+					: nextParsedSegment.getBegin()+1;
 				final int searchEnd=coalescing ? streamedText.getEnd() : streamedText.getBufferOverflowPosition();
 				while (i<searchEnd) {
 					final char ch=streamedText.charAt(i);
 					if (ch=='&') {
 						if (i>=source.fullSequentialParseData[0]) { // do not handle character references inside tags or script elements
-							final CharacterReference characterReference=CharacterReference.construct(source,i,Config.UnterminatedCharacterReferenceSettings.ACCEPT_ALL);
+							final CharacterReference characterReference=CharacterReference.construct(source,i,unterminatedCharacterReferenceSettings);
 							if (characterReference!=null) return characterReference;
 						}
 					} else if (handleTags && ch=='<') {
@@ -635,7 +646,7 @@ public final class StreamedSource implements Iterable<Segment>, Closeable {
 						if (tag!=null && !tag.isUnregistered()) {
 							final TagType tagType=tag.getTagType();
 							if (tag.end>source.fullSequentialParseData[0] && tagType!=StartTagType.DOCTYPE_DECLARATION) {
-								source.fullSequentialParseData[0]=(tagType==StartTagType.NORMAL && tag.name==HTMLElementName.SCRIPT) ? Integer.MAX_VALUE : tag.end;
+								source.fullSequentialParseData[0]=(tagType==StartTagType.NORMAL && tag.name==HTMLElementName.SCRIPT && !((StartTag)tag).isEmptyElementTag()) ? Integer.MAX_VALUE : tag.end;
 							}
 							return tag;
 						}

@@ -539,14 +539,14 @@ public final class StartTag extends Tag {
 		// A missing optional end tag returns a zero length EndTag instead of null
 		final EndTagType endTagType=startTagType.getCorrespondingEndTagType();
 		if (startTagType==StartTagType.NORMAL) {
+			checkForEmptyElementTag=!HTMLElements.isClosingSlashIgnored(name); // check for empty-element tags if tag is not an HTML element
+			if (checkForEmptyElementTag && isSyntacticalEmptyElementTag()) // non-html empty-element tag
+				return null; 
+			if (HTMLElements.getEndTagForbiddenElementNames().contains(name)) // end tag is forbidden
+				return null; // *** maybe add option to look for end tag if parsing strict XML?
 			final HTMLElementTerminatingTagNameSets terminatingTagNameSets=HTMLElements.getTerminatingTagNameSets(name);
 			if (terminatingTagNameSets!=null) // end tag is optional
 				return getOptionalEndTag(terminatingTagNameSets);
-			if (HTMLElements.getEndTagForbiddenElementNames().contains(name)) // end tag is forbidden
-				return null;
-			checkForEmptyElementTag=!HTMLElements.getEndTagRequiredElementNames().contains(name); // check for empty-element tags if tag is not an HTML element
-			if (checkForEmptyElementTag && isSyntacticalEmptyElementTag()) // non-html empty-element tag
-				return null; 
 		} else if (endTagType==null) {
 			return null;
 		}
