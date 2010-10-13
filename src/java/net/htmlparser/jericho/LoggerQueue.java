@@ -20,7 +20,6 @@
 
 package net.htmlparser.jericho;
 
-import java.io.*;
 import java.util.Queue;
 import java.util.LinkedList;
 
@@ -81,7 +80,7 @@ class LoggerQueue implements Logger {
 	}
 
 	public void outputTo(Logger logger) {
-		while (true) {
+		while (!queue.isEmpty()) {
 			String[] item=queue.poll();
 			if (item==null) return;
 			String level=item[0];

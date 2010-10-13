@@ -959,6 +959,42 @@ public class Segment implements Comparable<Segment>, CharSequence {
 	}
 
 	/**
+	 * Returns an indication of the maximum depth of nested elements within this segment.
+	 * <p>
+	 * A high return value can indicate that the segment contains a large number of incorrectly nested tags that could result in a <code>StackOverflowException</code>
+	 * if its content is parsed.
+	 * <p>
+	 * The usefulness of this method is debatable as a <code>StackOverflowException</code> is a recoverable error that can be easily caught.
+	 * The use of this method to pre-detect and avoid a stack overflow may save some memory and processing resources in certain circumstances, but the cost of calling
+	 * this method to check every segment or document will very often exceed any benefit.
+	 * <p>
+	 * It is up to the application developer to determine what return value constitutes an unreasonable level of nesting given the stack space allocated to the application
+	 * and other factors.
+	 * <p>
+	 * Note that the return value is an approximation only and is usually greater than the actual maximum element depth that would be reported by calling the 
+	 * {@link Element#getDepth()} method on the most nested element.
+	 *
+	 * @return an indication of the maximum depth of nested elements within this segment.
+	 */
+	public int getMaxDepthIndicator() {
+		int maxDepth=0;
+		int depth=0;
+		for (Tag tag : getAllTags()) {
+			if (tag instanceof StartTag) {
+				StartTag startTag=(StartTag)tag;
+				if (startTag.getStartTagType().getCorrespondingEndTagType()==null) continue;
+				if (HTMLElements.getEndTagForbiddenElementNames().contains(startTag.getName())) continue;
+				if (startTag.isEmptyElementTag()) continue;
+				depth++;
+				if (depth>maxDepth) maxDepth++;
+			} else {
+				depth--;
+			}
+		}
+		return maxDepth;
+	}
+
+	/**
 	 * Indicates whether the specified character is <a target="_blank" href="http://www.w3.org/TR/html401/struct/text.html#h-9.1">white space</a>.
 	 * <p>
 	 * The <a target="_blank" href="http://www.w3.org/TR/html401/struct/text.html#h-9.1">HTML 4.01 specification section 9.1</a>
