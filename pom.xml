@@ -15,8 +15,8 @@
         </license>
     </licenses>
     <scm>
-        <developerConnection>scm:svn:https://svn1.hosted-projects.com/transparentpolitics/modified-opensource/${artifactId}/trunk</developerConnection>
-    </scm>
+        <developerConnection>scm:git:${github-base}${project.artifactId}.git</developerConnection>
+    </scm>    
     <properties>
         <java-build>1.6</java-build>
         <ant-build>1.8.1</ant-build>
@@ -133,7 +133,7 @@
     <repositories>
         <repository>
             <id>amplafi.public</id>
-            <url>http://www.amplafi.com/repository/</url>
+            <url>http://maven.amplafi.com/</url>
             <releases>
                 <checksumPolicy>warn</checksumPolicy>
             </releases>
@@ -145,7 +145,7 @@
     <distributionManagement>
         <repository>
             <id>amplafi.public</id>
-            <url>ftp://amplafi.com/httpdocs/repository</url>
+            <url>ftp://maven.amplafi.com/</url>
         </repository>
     </distributionManagement>    
 </project>
