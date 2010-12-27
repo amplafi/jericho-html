@@ -18,6 +18,7 @@
         <developerConnection>scm:git:${github-base}${project.artifactId}.git</developerConnection>
     </scm>    
     <properties>
+        <github-base>git@github.com:amplafi/</github-base>
         <java-build>1.6</java-build>
         <ant-build>1.8.1</ant-build>
         <log4j-build>1.2.15</log4j-build>
