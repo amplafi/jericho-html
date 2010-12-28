@@ -73,24 +73,22 @@ public final class Source extends Segment implements Iterable<Segment> {
 	private String documentSpecifiedEncoding=UNINITIALISED;
 	private String encoding=UNINITIALISED; // null value means no encoding specified.
 	private String encodingSpecificationInfo;
-	private String preliminaryEncodingInfo=null;
+	private String preliminaryEncodingInfo;
 	private String newLine=UNINITIALISED;
 	private ParseText parseText=null;
-	private OutputDocument parseTextOutputDocument=null;
+	private OutputDocument parseTextOutputDocument;
 	Logger logger; // never null
-	private RowColumnVector[] rowColumnVectorCacheArray=null;
+	private RowColumnVector[] rowColumnVectorCacheArray;
 	final Cache cache;
 	boolean useAllTypesCache=true;
 	boolean useSpecialTypesCache=true;
-	int[] fullSequentialParseData=null; // non-null iff a fullSequentialParse is underway. In version 2.5 this was passed around as a parameter during full sequential parse, but this approach was found to be error-prone and abandoned in 2.6
+	int[] fullSequentialParseData; // non-null iff a fullSequentialParse is underway. In version 2.5 this was passed around as a parameter during full sequential parse, but this approach was found to be error-prone and abandoned in 2.6
 	// cached result lists:
-	Tag[] allTagsArray=null; // non-null iff fullSequentialParse was called
-	List<Tag> allTags=null; // non-null iff fullSequentialParse was called
-	List<StartTag> allStartTags=null;
-	private List<Element> allElements=null;
-	private List<Element> childElements=null;
-
-	private static volatile String lastNewLine=null;
+	Tag[] allTagsArray; // non-null iff fullSequentialParse was called
+	List<Tag> allTags; // non-null iff fullSequentialParse was called
+	List<StartTag> allStartTags;
+	private List<Element> allElements;
+	private List<Element> childElements;
 
 	private static final String UNINITIALISED="";
 	private static final String CR="\r";
@@ -472,24 +470,22 @@ public final class Source extends Segment implements Iterable<Segment> {
 	 * @return the <a target="_blank" href="http://en.wikipedia.org/wiki/Newline">newline</a> character sequence used in the source document, or <code>null</code> if none is present.
 	 */
 	public String getNewLine() {
-		if (newLine!=UNINITIALISED) return newLine;
-		for (int i=0; i<end; i++) {
-			char ch=sourceText.charAt(i);
-			if (ch=='\n')
-				newLine=LF;
-			else if (ch=='\r')
-				newLine=(++i<end && sourceText.charAt(i)=='\n') ? CRLF : CR;
-			else continue;
-			lastNewLine=newLine;
-			return newLine;
+		if (newLine==UNINITIALISED) { 
+			newLine=null;
+			// TODO: why not just use Pattern ? or break as soon as a match is found ( pattern is best ) 
+			for (int i=0; i<end; i++) {
+				char ch=sourceText.charAt(i);
+				if (ch=='\n')
+					newLine=LF;
+				else if (ch=='\r')
+					newLine=(++i<end && sourceText.charAt(i)=='\n') ? CRLF : CR;
+			}
 		}
-		return newLine=null;
+		return newLine;
 	}
-
 	String getBestGuessNewLine() {
 		final String newLine=getNewLine();
 		if (newLine!=null) return newLine;
-		if (lastNewLine!=null) return lastNewLine;
 		return Config.NewLine;
 	}
 
