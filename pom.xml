@@ -20,9 +20,8 @@
     <properties>
         <github-base>git@github.com:amplafi/</github-base>
         <java-build>1.6</java-build>
-        <ant-build>1.8.1</ant-build>
-        <log4j-build>1.2.15</log4j-build>
-        <slf4j-build>1.5.8</slf4j-build>    
+        <log4j-build>1.2.16</log4j-build>
+        <slf4j-build>1.6.1</slf4j-build>    
         <commons-logging-build>1.1.1</commons-logging-build>        
         <wagon-build>1.0-beta-7</wagon-build>        
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
