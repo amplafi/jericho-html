@@ -629,7 +629,7 @@ public final class FormFields extends AbstractCollection<FormField> {
 
 	void add(final FormControl formControl, final String predefinedValue, String fieldName) {
 		if (Config.CurrentCompatibilityMode.isFormFieldNameCaseInsensitive()) fieldName=fieldName.toLowerCase();
-		FormField formField=(FormField)map.get(fieldName);
+		FormField formField=map.get(fieldName);
 		if (formField==null) {
 			formField=new FormField(fieldName);
 			map.put(formField.getName(),formField);
