@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.htmlparser.jericho</groupId>
     <artifactId>jericho-html</artifactId>
-    <version>3.2.a2</version>
+    <version>3.2.a3</version>
     <packaging>jar</packaging>
     <name>Amplafi Jericho Html</name>
     <description>jericho htmlparser fork</description>
@@ -110,8 +110,23 @@
     </build>
     <dependencies>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-build}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+                <dependency>
             <groupId>commons-logging</groupId>
-            <artifactId>commons-logging-api</artifactId>
+            <artifactId>commons-logging</artifactId>
             <version>${commons-logging-build}</version>
         </dependency>
         <dependency>
@@ -144,17 +159,6 @@
             <version>4.8.2</version>
             <scope>test</scope>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-build}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
     <repositories>
