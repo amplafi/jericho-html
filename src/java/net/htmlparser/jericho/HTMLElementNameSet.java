@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.2-dev
+// Version 3.2
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -27,7 +27,7 @@ final class HTMLElementNameSet extends HashSet<String> {
 		super(1);
 	}
 
-	public HTMLElementNameSet(final String[] items) {
+	public HTMLElementNameSet(String... items) {
 		super(items.length*2);
 		for (int i=0; i<items.length; i++) add(items[i]);
 	}

@@ -222,7 +222,7 @@ public class HTMLSanitiser {
 		if (tag.getTagType()==StartTagType.NORMAL) {
 			Element element=tag.getElement();
 			if (HTMLElements.getEndTagRequiredElementNames().contains(elementName)) {
-				if (element.getEndTag()==null) return false; // refect start tag if its required end tag is missing
+				if (element.getEndTag()==null) return false; // reject start tag if its required end tag is missing
 			} else if (HTMLElements.getEndTagOptionalElementNames().contains(elementName)) {
 				if (elementName==HTMLElementName.LI && !isValidLITag(tag)) return false; // reject invalid LI tags
 				if (element.getEndTag()==null) outputDocument.insert(element.getEnd(),getEndTagHTML(elementName)); // insert optional end tag if it is missing

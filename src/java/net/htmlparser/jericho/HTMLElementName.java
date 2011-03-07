@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.2-dev
+// Version 3.2
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -24,7 +24,8 @@ import java.util.*;
 
 /**
  * Contains static fields representing the {@linkplain Element#getName() names} of
- * <a target="_blank" href="http://www.w3.org/TR/html401/index/elements.html">all elements defined in the HTML 4.01 specification</a>.
+ * <a target="_blank" href="http://www.w3.org/TR/html401/index/elements.html">all elements defined in the HTML 4.01 specification</a>
+ * and the <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#elements-1">draft HTML 5 specification</a>.
  * <p>
  * All of the name strings are in lower case.
  * <p>
@@ -35,10 +36,6 @@ import java.util.*;
  * to provide less verbose access to the contained element name static fields.
  * <p>
  * The field values in this interface can be used as <code>name</code> arguments in <a href="Tag.html#NamedSearch">named tag searches</a>.
- * <p>
- * Note that since the <code>Tag</code> class implements <code>HTMLElementName</code>, all the constants defined in this interface
- * can be referred to via the <code>Tag</code> class.
- * <br />For example, <code>Tag.BODY</code> is equivalent to <code>HTMLElementName.BODY</code>.
  *
  * @see HTMLElements
  * @see Element
@@ -100,6 +97,31 @@ public interface HTMLElementName {
 	public static final String AREA="area";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-article-element">HTML element article</a> - self-contained syndicatable or reusable composition.
+	 * <p>
+	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String ARTICLE="article";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-aside-element">HTML element aside</a> - sidebar for tangentially related content.
+	 * <p>
+	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String ASIDE="aside";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-audio-element">HTML element audio</a> - audio player.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String AUDIO="audio";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/present/graphics.html#edef-B">HTML element B</a> - bold text style.
 	 * <p>
 	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
@@ -126,6 +148,15 @@ public interface HTMLElementName {
 	 * (see {@link HTMLElements#getDeprecatedElementNames()})
 	 */
 	public static final String BASEFONT="basefont";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-bdi-element">HTML element bdi</a> - text directionality isolation.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String BDI="bdi";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/dirlang.html#edef-BDO">HTML element BDO</a> - I18N BiDi over-ride.
@@ -197,6 +228,13 @@ public interface HTMLElementName {
 	public static final String BUTTON="button";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-article-element">HTML element canvas</a> - scriptable bitmap canvas.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String CANVAS="canvas";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/tables.html#edef-CAPTION">HTML element CAPTION</a> - table caption.
 	 * <p>
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
@@ -259,6 +297,20 @@ public interface HTMLElementName {
 	public static final String COLGROUP="colgroup";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-command">HTML element command</a> - menu command.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagForbiddenElementNames() forbidden}.
+	 */
+	public static final String COMMAND="command";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/forms.html#the-datalist-element">HTML element datalist</a> - container for options for combo box control.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String DATALIST="datalist";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/lists.html#edef-DD">HTML element DD</a> - definition description.
 	 * <p>
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagOptionalElementNames() optional}:
@@ -284,6 +336,15 @@ public interface HTMLElementName {
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
 	 */
 	public static final String DEL="del";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-details-element">HTML element details</a> - disclosure control for hiding details.
+	 * <p>
+	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String DETAILS="details";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/text.html#edef-DFN">HTML element DFN</a> - instance definition.
@@ -352,6 +413,13 @@ public interface HTMLElementName {
 	public static final String EM="em";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-embed-element">HTML element embed</a> - plugin.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagForbiddenElementNames() forbidden}.
+	 */
+	public static final String EMBED="embed";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/interact/forms.html#edef-FIELDSET">HTML element FIELDSET</a> - form control group.
 	 * <p>
 	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
@@ -359,6 +427,20 @@ public interface HTMLElementName {
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
 	 */
 	public static final String FIELDSET="fieldset";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-figcaption-element">HTML element figcaption</a> - caption for figure.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String FIGCAPTION="figcaption";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-figure-element">HTML element figure</a> - figure with optional caption.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String FIGURE="figure";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/present/graphics.html#edef-FONT">HTML element FONT</a> - local change to font.
@@ -371,6 +453,15 @@ public interface HTMLElementName {
 	 * (see {@link HTMLElements#getDeprecatedElementNames()})
 	 */
 	public static final String FONT="font";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-footer-element">HTML element footer</a> - footer for a page or section.
+	 * <p>
+	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String FOOTER="footer";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/interact/forms.html#edef-FORM">HTML element FORM</a> - interactive form.
@@ -468,6 +559,24 @@ public interface HTMLElementName {
 	 * </table>
 	 */
 	public static final String HEAD="head";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-header-element">HTML element header</a> - introductory or navigational aids for a page or section.
+	 * <p>
+	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String HEADER="header";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-hgroup-element">HTML element hgroup</a> - heading group.
+	 * <p>
+	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String HGROUP="hgroup";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/present/graphics.html#edef-HR">HTML element HR</a> - horizontal rule.
@@ -569,6 +678,15 @@ public interface HTMLElementName {
 	public static final String KBD="kbd";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-keygen-element">HTML element keygen</a> - cryptographic key-pair generator form control.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagForbiddenElementNames() forbidden}.
+	 */
+	public static final String KEYGEN="keygen";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/interact/forms.html#edef-LABEL">HTML element LABEL</a> - form field label text.
 	 * <p>
 	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
@@ -619,6 +737,15 @@ public interface HTMLElementName {
 	public static final String MAP="map";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-mark-element">HTML element mark</a> - highlight.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String MARK="mark";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/lists.html#edef-MENU">HTML element MENU</a> - menu list.
 	 * <p>
 	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
@@ -636,6 +763,24 @@ public interface HTMLElementName {
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagForbiddenElementNames() forbidden}.
 	 */
 	public static final String META="meta";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-meter-element">HTML element meter</a> - gauge.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String METER="meter";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-nav-element">HTML element nav</a> - section with navigational links.
+	 * <p>
+	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String NAV="nav";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/present/frames.html#edef-NOFRAMES">HTML element NOFRAMES</a> - alternate content container for non frame-based rendering.
@@ -699,6 +844,15 @@ public interface HTMLElementName {
 	public static final String OPTION="option";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-output-element">HTML element output</a> - calculated output value.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String OUTPUT="output";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/text.html#edef-P">HTML element P</a> - paragraph.
 	 * <p>
 	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
@@ -749,6 +903,15 @@ public interface HTMLElementName {
 	public static final String PRE="pre";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-progress-element">HTML element progress</a> - progress bar.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String PROGRESS="progress";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/text.html#edef-Q">HTML element Q</a> - short inline quotation.
 	 * <p>
 	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
@@ -756,6 +919,55 @@ public interface HTMLElementName {
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
 	 */
 	public static final String Q="q";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-rp-element">HTML element rp</a> - parenthesis for ruby annotation text.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagOptionalElementNames() optional}:
+	 * <table class="CompactDL" cellspacing="0">
+	 *  <tr>
+	 *   <td title="Start tags that terminate this element"><a href="HTMLElements.html#getTerminatingStartTagNames(java.lang.String)">Terminating start tags</a>:
+	 *   <td>{@link #RP}, {@link #RT}
+	 *  <tr>
+	 *   <td title="End tags that terminate this element"><a href="HTMLElements.html#getTerminatingEndTagNames(java.lang.String)">Terminating end tags</a>:
+	 *   <td>{@link #RUBY}
+	 *  <tr>
+	 *   <td title="Elements that can be nested inside this element without terminating it"><a href="HTMLElements#getNonterminatingElementNames(java.lang.String)">Nonterminating elements</a>:
+	 *   <td>(none)
+	 * </table>
+	 */
+	public static final String RP="rp";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-rt-element">HTML element rt</a> - ruby annotation text.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagOptionalElementNames() optional}:
+	 * <table class="CompactDL" cellspacing="0">
+	 *  <tr>
+	 *   <td title="Start tags that terminate this element"><a href="HTMLElements.html#getTerminatingStartTagNames(java.lang.String)">Terminating start tags</a>:
+	 *   <td>{@link #RP}, {@link #RT}
+	 *  <tr>
+	 *   <td title="End tags that terminate this element"><a href="HTMLElements.html#getTerminatingEndTagNames(java.lang.String)">Terminating end tags</a>:
+	 *   <td>{@link #RUBY}
+	 *  <tr>
+	 *   <td title="Elements that can be nested inside this element without terminating it"><a href="HTMLElements#getNonterminatingElementNames(java.lang.String)">Nonterminating elements</a>:
+	 *   <td>(none)
+	 * </table>
+	 */
+	public static final String RT="rt";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-ruby-element">HTML element ruby</a> - ruby annotation(s).
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String RUBY="ruby";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/present/graphics.html#edef-S">HTML element S</a> - strike-through text style.
@@ -788,6 +1000,15 @@ public interface HTMLElementName {
 	public static final String SCRIPT="script";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-section-element">HTML element section</a> - generic document or application section.
+	 * <p>
+	 * This is a {@linkplain HTMLElements#getBlockLevelElementNames() block-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String SECTION="section";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/interact/forms.html#edef-SELECT">HTML element SELECT</a> - option selector.
 	 * <p>
 	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
@@ -804,6 +1025,13 @@ public interface HTMLElementName {
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
 	 */
 	public static final String SMALL="small";
+
+	/**
+	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/links.html#edef-LINK">HTML element source</a> - media source for video or audio.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagForbiddenElementNames() forbidden}.
+	 */
+	public static final String SOURCE="source";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/global.html#edef-SPAN">HTML element SPAN</a> - generic language/style container.
@@ -846,6 +1074,13 @@ public interface HTMLElementName {
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
 	 */
 	public static final String SUB="sub";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-summary-element">HTML element summary</a> - caption for details.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String SUMMARY="summary";
 
 	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/text.html#edef-SUP">HTML element SUP</a> - superscript.
@@ -974,6 +1209,15 @@ public interface HTMLElementName {
 	public static final String THEAD="thead";
 
 	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-time-element">HTML element time</a> - date and/or time.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String TIME="time";
+
+	/**
 	 * <a target="_blank" href="http://www.w3.org/TR/html401/struct/global.html#edef-TITLE">HTML element TITLE</a> - document title.
 	 * <p>
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
@@ -1036,4 +1280,20 @@ public interface HTMLElementName {
 	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
 	 */
 	public static final String VAR="var";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-video-element">HTML element video</a> - video player.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagRequiredElementNames() required}.
+	 */
+	public static final String VIDEO="video";
+
+	/**
+	 * <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-wbr-element">HTML element wbr</a> - line breaking opportunity.
+	 * <p>
+	 * This is an {@linkplain HTMLElements#getInlineLevelElementNames() inline-level} element.
+	 * <p>
+	 * The end tag of this element is {@linkplain HTMLElements#getEndTagForbiddenElementNames() forbidden}.
+	 */
+	public static final String WBR="wbr";
 }

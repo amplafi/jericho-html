@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.2-dev
+// Version 3.2
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -183,11 +183,14 @@ public final class StartTag extends Tag {
 	 * <p>
 	 * This property checks that the the tag is {@linkplain #isSyntacticalEmptyElementTag() syntactically an empty-element tag},
 	 * but in addition checks that the {@linkplain #getName() name} of the tag is not one that is defined in the HTML specification to have a
-	 * {@linkplain HTMLElements#getEndTagRequiredElementNames() required} or {@linkplain HTMLElements#getEndTagOptionalElementNames() optional} end tag,
+	 * {@linkplain HTMLElements#getEndTagRequiredElementNames() required} or an {@linkplain HTMLElements#getEndTagOptionalElementNames() optional} end tag,
 	 * which the major browsers do not recognise as empty-element tags, even in an <a target="_blank" href="http://www.w3.org/TR/xhtml1/">XHTML</a> document.
 	 * <p>
 	 * This is equivalent to:<br />
 	 * {@link #isSyntacticalEmptyElementTag()}<code> && !(</code>{@link HTMLElements#getEndTagOptionalElementNames()}<code>.contains(</code>{@link #getName() getName()}<code>) || </code>{@link HTMLElements#getEndTagRequiredElementNames()}<code>.contains(</code>{@link #getName() getName()}<code>))</code>.
+	 * <p>
+	 * You can set the static {@link Config#IsHTMLEmptyElementTagRecognised} property to <code>true</code> to force the parser to recognise all empty-element tags,
+	 * making this method is exactly equivalent to {@link #isSyntacticalEmptyElementTag()}.
 	 *
 	 * @return <code>true</code> if this start tag is an <a target="_blank" href="http://www.w3.org/TR/REC-xml#dt-eetag">empty-element tag</a>, otherwise <code>false</code>.
 	 */

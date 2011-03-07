@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.2-dev
+// Version 3.2
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -125,6 +125,24 @@ public final class Config {
 	 * The default value is <code>false</code>.
 	 */
 	public static boolean IsApostropheEncoded=false;
+
+	/**
+	 * Determines whether all {@linkplain StartTag#isEmptyElementTag() empty-element tags} are recognised.
+	 * <p>
+	 * The major browsers do not recognise empty-element tags (those having the characters "/&gt;" at the end of the start tag) if the element is defined by the
+	 * HTML specification to have a {@linkplain HTMLElements#getEndTagRequiredElementNames() required} or an {@linkplain HTMLElements#getEndTagOptionalElementNames() optional} end tag.
+	 * This is the case even in <a target="_blank" href="http://www.w3.org/TR/xhtml1/">XHTML</a> documents, which can cause a lot of confusion.
+	 * <p>
+	 * Setting this property to <code>true</code> forces the parser to recognise all {@linkplain StartTag#isSyntacticalEmptyElementTag() syntactical empty-element tags},
+	 * regardless of whether the element is defined by the HTML specification to have a required or optional end tag.
+	 * <p>
+	 * Use of this feature is however not recommended as it makes the parser behaviour inconsistent with that of most browsers.
+	 * <p>
+	 * The default value is <code>false</code>.
+	 *
+	 * @see StartTag#isEmptyElementTag()
+	 */
+	public static boolean IsHTMLEmptyElementTagRecognised=false;
 
 	/**
 	 * Determines the {@link LoggerProvider} that is used to create the default {@link Logger} object for each new {@link Source} object.

@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.2-dev
+// Version 3.2
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -87,6 +87,9 @@ public class Segment implements Comparable<Segment>, CharSequence {
 
 	/**
 	 * Returns the character position in the {@link Source} document at which this segment begins, inclusive.
+	 * <p>
+	 * Use the {@link Source#getRowColumnVector(int pos)} method to determine the row and column numbers corresponding to this character position.
+	 *
 	 * @return the character position in the {@link Source} document at which this segment begins, inclusive.
 	 */
 	public final int getBegin() {
@@ -99,6 +102,7 @@ public class Segment implements Comparable<Segment>, CharSequence {
 	 * The character at the position specified by this property is <b>not</b> included in the segment.
 	 *
 	 * @return the character position in the {@link Source} document immediately after the end of this segment.
+	 * @see #getBegin()
 	 */
 	public final int getEnd() {
 		return end;

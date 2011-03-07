@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.2-dev
+// Version 3.2
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -196,6 +196,23 @@ public final class Source extends Segment implements Iterable<Segment> {
 	/**
 	 * Constructs a new <code>Source</code> object by loading the content from the specified <code>URLConnection</code>.
 	 * <p>
+	 * To convert the stream of bytes from the <code>URLConnection</code> into characters the library must determine the character encoding of the stream.
+	 * This should be specified in the HTTP headers of the connection, but in many cases this information is not available and the encoding must be determined by other means.
+	 * <p>
+	 * In the encoding detection algorithm detailed below, the <a name="Default8BitEncoding">default 8-bit encoding</a> is
+	 * <a target="_blank" href="http://en.wikipedia.org/wiki/Windows-1252">Windows-1252</a>.
+	 * In the unlikely event that Windows-1252 is not a supported encoding on the host platform then
+	 * <a target="_blank" href="http://en.wikipedia.org/wiki/ISO-8859-1#ISO-8859-1">ISO-8859-1</a> is used instead.
+	 * Windows-1252 is preferred as it defines more printable characters than ISO-8859-1, specifically in the hex range 80 to 9F, while being a superset of all the
+	 * other printable characters in ISO-8859-1.
+	 * <p>
+	 * The algorithm specified by HTML5 to <a target="_blank" href="http://dev.w3.org/html5/spec/Overview.html#the-input-stream">determine the character encoding</a>
+	 * is very different to the algorithm used in this library, which follows the Unicode, HTTP, XML and HTML 4.01 specifications.
+	 * The HTML5 algorithm "willfully violates" several specifications in order to maximise compatability with the misreported encodings of existing web pages and servers.
+	 * <p>
+	 * If the algorithm used in this library is not suitable for your application then you can employ a different library or your own code to detect the encoding
+	 * and construct the <code>Source</code> document using the {@link #Source(Reader)} constructor instead.
+	 * <p>
 	 * The algorithm for detecting the character {@linkplain #getEncoding() encoding} of the source document is as follows:
 	 * <br />(process termination is marked by &diams;)
 	 * <ol class="HalfSeparated">
@@ -221,16 +238,16 @@ public final class Source extends Segment implements Iterable<Segment> {
 	 *   </table>
 	 *  <li>If the stream contains less than four bytes, then:
 	 *   <ol class="Unseparated">
-	 *    <li>If the stream contains either one or three bytes, then use the encoding <a target="_blank" href="http://en.wikipedia.org/wiki/ISO-8859-1#ISO-8859-1">ISO-8859-1</a>. &diams;
+	 *    <li>If the stream contains either one or three bytes, then use the <a href="#Default8BitEncoding">default 8-bit encoding</a>. &diams;
 	 *    <li>If the stream starts with a zero byte, then use the encoding <a target="_blank" href="http://en.wikipedia.org/wiki/UTF-16">UTF-16BE</a>. &diams;
 	 *    <li>If the second byte of the stream is zero, then use the encoding <a target="_blank" href="http://en.wikipedia.org/wiki/UTF-16">UTF-16LE</a>. &diams;
-	 *    <li>Otherwise use the encoding <a target="_blank" href="http://en.wikipedia.org/wiki/ISO-8859-1#ISO-8859-1">ISO-8859-1</a>. &diams;
+	 *    <li>Otherwise use the <a href="#Default8BitEncoding">default 8-bit encoding</a>. &diams;
 	 *   </ol>
 	 *  <li>Determine a {@linkplain #getPreliminaryEncodingInfo() preliminary encoding} by examining the first four bytes of the input stream.
 	 *   See the {@link #getPreliminaryEncodingInfo()} method for details.
 	 *  <li>Read the first 2048 bytes of the input stream and decode it using the preliminary encoding to create a "preview segment".
-	 *   If the detected preliminary encoding is not supported on this platform, create the preview segment using
-	 *   <a target="_blank" href="http://en.wikipedia.org/wiki/ISO-8859-1#ISO-8859-1">ISO-8859-1</a> instead (this incident is logged at {@linkplain Logger#warn(String) warn} level).
+	 *   If the detected preliminary encoding is not supported on this platform, create the preview segment using the
+	 *   <a href="#Default8BitEncoding">default 8-bit encoding</a> instead (this incident is logged at {@linkplain Logger#warn(String) warn} level).
 	 *  <li>Search the preview segment for an <a href="#EncodingSpecification">encoding specification</a>, which should always appear at or near the top of the document.
 	 *  <li>If an encoding specification is found:
 	 *   <ol class="Unseparated">
@@ -249,7 +266,7 @@ public final class Source extends Segment implements Iterable<Segment> {
 	 *   states that an encoding of <a target="_blank" href="http://en.wikipedia.org/wiki/ISO-8859-1#ISO-8859-1">ISO-8859-1</a> can be assumed
 	 *   if no <code>charset</code> parameter was included in the HTTP
 	 *   <a target="_blank" href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> header.
-	 *   This is consistent with the preliminary encoding detected in this scenario.
+	 *   The <a href="#Default8BitEncoding">default 8-bit encoding</a> normally used in this scenario is compatible with the HTTP protocol assumption.
 	 * </ol>
 	 *
 	 * @param urlConnection  the URL connection from which to load the source text.
@@ -289,6 +306,9 @@ public final class Source extends Segment implements Iterable<Segment> {
 	 *   HTTP header value, which is placed in the value of the meta tag's <code>content</code> attribute.
 	 *   This META declaration should appear as early as possible in the {@link HTMLElementName#HEAD HEAD} element.
 	 *   <pre>&lt;META http-equiv=Content-Type content="text/html; charset=iso-8859-1"&gt;</pre>
+	 *   An HTML5 <a target="_blank" href="http://dev.w3.org/html5/markup/meta.charset.html">character encoding declaration</a>
+	 *   is also a valid alternative.
+	 *   <pre>&lt;meta charset="utf-8"&gt;</pre>
 	 * </ol>
 	 * <p>
 	 * Both of these tags must only use characters in the range U+0000 to U+007F, and in the case of the META declaration
@@ -305,14 +325,16 @@ public final class Source extends Segment implements Iterable<Segment> {
 			documentSpecifiedEncoding=((StartTag)xmlDeclarationTag).getAttributeValue("encoding");
 			if (documentSpecifiedEncoding!=null) return setEncoding(documentSpecifiedEncoding,xmlDeclarationTag.toString());
 		}
-		// Check for Content-Type http-equiv meta tag:
-		final StartTag contentTypeMetaTag=getFirstStartTag("http-equiv","content-type",false);
-		if (contentTypeMetaTag!=null) {
-			final String contentValue=contentTypeMetaTag.getAttributeValue("content");
-			if (contentValue!=null) {
+		// Check meta tags:
+		for (StartTag metaTag : getAllStartTags(HTMLElementName.META)) {
+			documentSpecifiedEncoding=metaTag.getAttributeValue("charset");
+			if (documentSpecifiedEncoding==null) {
+				if (!"content-type".equalsIgnoreCase(metaTag.getAttributeValue("http-equiv"))) continue;
+				final String contentValue=metaTag.getAttributeValue("content");
+				if (contentValue==null) continue;
 				documentSpecifiedEncoding=getCharsetParameterFromHttpHeaderValue(contentValue);
-				if (documentSpecifiedEncoding!=null) return setEncoding(documentSpecifiedEncoding,contentTypeMetaTag.toString());
 			}
+			if (documentSpecifiedEncoding!=null) return setEncoding(documentSpecifiedEncoding,metaTag.toString());
 		}
 		return setEncoding(null,"No encoding specified in document");
 	}
@@ -473,16 +495,16 @@ public final class Source extends Segment implements Iterable<Segment> {
 		if (newLine==UNINITIALISED) { 
 			newLine=null;
 			// TODO: why not just use Pattern ? or break as soon as a match is found ( pattern is best ) 
-			for (int i=0; i<end; i++) {
-				char ch=sourceText.charAt(i);
-				if (ch=='\n')
-					newLine=LF;
-				else if (ch=='\r')
-					newLine=(++i<end && sourceText.charAt(i)=='\n') ? CRLF : CR;
+		for (int i=0; i<end; i++) {
+			char ch=sourceText.charAt(i);
+			if (ch=='\n')
+				newLine=LF;
+			else if (ch=='\r')
+				newLine=(++i<end && sourceText.charAt(i)=='\n') ? CRLF : CR;
 			}
 		}
-		return newLine;
-	}
+			return newLine;
+		}
 	String getBestGuessNewLine() {
 		final String newLine=getNewLine();
 		if (newLine!=null) return newLine;
