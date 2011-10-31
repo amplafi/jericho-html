@@ -12,3 +12,6 @@ output.txt
 /test/lib
 /samples/webapps/JerichoHTML.war
 /samples/console/classes
+/samples/webapps/JerichoHTML/WEB-INF/lib
+/docs/javadoc
+/docs/javadoc-jar
