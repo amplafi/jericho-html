@@ -6,3 +6,6 @@
 /test-output
 pom.xml.versionsBackup
 output.txt
+/classes
+/compile-time-dependencies
+/dist
