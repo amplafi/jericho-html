@@ -9,3 +9,6 @@ output.txt
 /classes
 /compile-time-dependencies
 /dist
+/test/lib
+/samples/webapps/JerichoHTML.war
+/samples/console/classes
