@@ -26,6 +26,9 @@
         <wagon-build>1.0-beta-7</wagon-build>        
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>    
+    <prerequisites>
+        <maven>3.0.3</maven>
+    </prerequisites>
     <build>
         <defaultGoal>deploy</defaultGoal>
         <sourceDirectory>src/java</sourceDirectory>
@@ -46,6 +49,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <source>${java-build}</source>
                     <target>${java-build}</target>
@@ -66,6 +70,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
