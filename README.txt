@@ -1,8 +1,12 @@
-This is a fork of jericho-html.sourceforge.net
+This is a fork of jerichohtml.sourceforge.net
 
 The fork was created to address some issues that we had with the original project that we needed in order to use it in a server environment:
  * Html errors are logged.
  * some issues with multithreading
+ 
+Specifically,
+ * HtmlIssueProcessingHandler
+ * HtmlIssue
  
 The base code is pretty good in many respects.
 
