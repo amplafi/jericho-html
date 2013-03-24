@@ -1035,8 +1035,8 @@ public class CharacterEntityReference extends CharacterReference {
 		return new CharacterEntityReference(source,begin,end,codePoint);
 	}
 
-	private static final boolean isValidReferenceNameChar(final char ch) {
-		return ch>='A' && ch<='z' && (ch<='Z' || ch>='a');
+		private static final boolean isValidReferenceNameChar(final char ch) {
+		return (ch>='a' && ch<='z') || (ch>='A' && ch<='Z') || (ch>='0' && ch<='9');
 	}
 }
 
