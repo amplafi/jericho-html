@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.2-dev
+// Version 3.3-dev
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of either one of the following licences:

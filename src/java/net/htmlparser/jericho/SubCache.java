@@ -1,5 +1,5 @@
 // Jericho HTML Parser - Java based library for analysing and manipulating HTML
-// Version 3.2
+// Version 3.3
 // Copyright (C) 2004-2009 Martin Jericho
 // http://jericho.htmlparser.net/
 //
@@ -359,18 +359,21 @@ final class SubCache {
 		array=newArray;
 	}
 
+	@SuppressWarnings("serial")
 	private static class CacheEntryMissingInternalError extends AssertionError {
 		public CacheEntryMissingInternalError(final TagType tagType, final Tag tag, final SubCache subCache, final String message) {
 			super("INTERNAL ERROR: Inconsistent Cache State for TagType \""+tagType+"\" - "+message+' '+tag.getDebugInfo()+'\n'+subCache);
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private static class SourceCacheEntryMissingInternalError extends CacheEntryMissingInternalError {
 		public SourceCacheEntryMissingInternalError(final TagType tagType, final Tag tag, final SubCache subCache) {
 			super(tagType,tag,subCache,"cache entry no longer found in source:");
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private static class FoundCacheEntryMissingInternalError extends CacheEntryMissingInternalError {
 		public FoundCacheEntryMissingInternalError(final TagType tagType, final Tag tag, final SubCache subCache) {
 			super(tagType,tag,subCache,"missing cache entry for found tag");
