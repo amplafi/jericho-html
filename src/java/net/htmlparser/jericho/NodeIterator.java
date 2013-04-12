@@ -35,6 +35,7 @@ class NodeIterator implements Iterator<Segment> {
 	private Tag nextTag;
 	private CharacterReference characterReferenceAtCurrentPosition=null;
 
+	@SuppressWarnings("deprecation")
 	private final boolean legacyIteratorCompatabilityMode=Source.LegacyIteratorCompatabilityMode;
 
 	public NodeIterator(final Segment segment) {
