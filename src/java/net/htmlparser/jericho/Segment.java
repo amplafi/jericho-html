@@ -342,6 +342,7 @@ public class Segment implements Comparable<Segment>, CharSequence {
 	public List<StartTag> getAllStartTags(String name) {
 		if (name==null) return getAllStartTags();
 		final boolean isXMLTagName=Tag.isXMLName(name);
+		name=name.toLowerCase();
 		StartTag startTag=checkEnclosure(StartTag.getNext(source,begin,name,StartTagType.NORMAL,isXMLTagName));
 		if (startTag==null) return Collections.emptyList();
 		final ArrayList<StartTag> list=new ArrayList<StartTag>();
@@ -585,6 +586,7 @@ public class Segment implements Comparable<Segment>, CharSequence {
 	 *  <tr><th>HTML element name<th>Attribute name
 	 *  <tr><td>{@link HTMLElementName#A A}<td>href
 	 *  <tr><td>{@link HTMLElementName#APPLET APPLET}<td>codebase
+	 *  <tr><td>{@link HTMLElementName#APPLET APPLET}<td>archive
 	 *  <tr><td>{@link HTMLElementName#AREA AREA}<td>href
 	 *  <tr><td>{@link HTMLElementName#BASE BASE}<td>href
 	 *  <tr><td>{@link HTMLElementName#BLOCKQUOTE BLOCKQUOTE}<td>cite
@@ -603,6 +605,7 @@ public class Segment implements Comparable<Segment>, CharSequence {
 	 *  <tr><td>{@link HTMLElementName#INPUT INPUT}<td>usemap
 	 *  <tr><td>{@link HTMLElementName#INS INS}<td>cite
 	 *  <tr><td>{@link HTMLElementName#LINK LINK}<td>href
+	 *  <tr><td>{@link HTMLElementName#OBJECT OBJECT}<td>archive
 	 *  <tr><td>{@link HTMLElementName#OBJECT OBJECT}<td>classid
 	 *  <tr><td>{@link HTMLElementName#OBJECT OBJECT}<td>codebase
 	 *  <tr><td>{@link HTMLElementName#OBJECT OBJECT}<td>data
@@ -623,19 +626,19 @@ public class Segment implements Comparable<Segment>, CharSequence {
 	public List<Attribute> getURIAttributes() {
 		return URIAttributes.getList(this);
 	}
-
 	/**
 	 * Returns a list of all <a target="_blank" href="http://en.wikipedia.org/wiki/URI">URI</a> {@linkplain Segment segments}
-	 * inside <code>style</code> attribute values {@linkplain #encloses(Segment) enclosed} by this segment.
+	 * inside the CSS of {@link HTMLElementName#STYLE STYLE} elements and <code>style</code> attribute values
+	 * {@linkplain #encloses(Segment) enclosed} by this segment.
 	 * <p>
-	 * If this segment does not contain any tags, the entire segment is assumed to be a <code>style</code> attribute value.
+	 * If this segment does not contain any tags, the entire segment is assumed to be CSS.
 	 * <p>
-	 * The URI segments are found by searching the <code>style</code> attribute values for the functional notation "<code>url()</code>" as described in
+	 * The URI segments are found by searching the CSS for the functional notation "<code>url()</code>" as described in
 	 * <a target="_blank" href="http://www.w3.org/TR/CSS2/syndata.html#uri">section 4.3.4 of the CSS2 specification</a>.
 	 * <p>
 	 * The segments are returned in order of appearance.
 	 *
-	 * @return a list of all <a target="_blank" href="http://en.wikipedia.org/wiki/URI">URI</a> {@linkplain Segment segments} inside <code>style</code> attribute values {@linkplain #encloses(Segment) enclosed} by this segment.
+	 * @return a list of all <a target="_blank" href="http://en.wikipedia.org/wiki/URI">URI</a> {@linkplain Segment segments} inside {@link HTMLElementName#STYLE STYLE} elements and <code>style</code> attribute values {@linkplain #encloses(Segment) enclosed} by this segment.
 	 * @see #getURIAttributes()
 	 */
 	public List<Segment> getStyleURISegments() {
@@ -762,6 +765,7 @@ public class Segment implements Comparable<Segment>, CharSequence {
 	public final Element getFirstElement(String name) {
 		if (name==null) return getFirstElement();
 		final boolean isXMLTagName=Tag.isXMLName(name);
+		name=name.toLowerCase();
 		StartTag startTag=checkEnclosure(StartTag.getNext(source,begin,name,StartTagType.NORMAL,isXMLTagName));
 		while (startTag!=null) {
 			final Element element=startTag.getElement();
@@ -1022,6 +1026,15 @@ public class Segment implements Comparable<Segment>, CharSequence {
 	public static final boolean isWhiteSpace(final char ch) {
 		for (char whiteSpaceChar : WHITESPACE) if (ch==whiteSpaceChar) return true;
 		return false;
+	}
+
+	/**
+		 * Returns a {@link RowColumnVector} object representing the row and column number of the {@linkplain #getBegin() start} of this segment in the source document.
+	 * @return a {@link RowColumnVector} object representing the row and column number of the {@linkplain #getBegin() start} of this segment in the source document.
+	 * @see Source#getRowColumnVector(int pos)
+	 */
+	public RowColumnVector getRowColumnVector() {
+		return source.getRowColumnVector(begin);
 	}
 
 	/**
