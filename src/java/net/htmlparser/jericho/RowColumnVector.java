@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * Represents the row and column number of a character position in the source document.
  * <p>
- * Obtained using the {@link Source#getRowColumnVector(int pos)} method.
+ * Obtained using the {@link Source#getRowColumnVector(int pos)} or {@link Segment#getRowColumnVector()} method.
  */
 public final class RowColumnVector {
 	private final int row;
