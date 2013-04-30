@@ -128,13 +128,22 @@ public final class EndTag extends Tag {
 	/**
 	 * Returns an XML representation of this end tag.
 	 * <p>
-	 * This method is included for symmetry with the {@link StartTag#tidy()} method and simply
-	 * returns the {@linkplain Segment#toString() source text} of the tag.
+	 * The tidying of the tag is carried out as follows:
+	 * <ul>
+	 *  <li>if this end tag is a {@link EndTagType#NORMAL NORMAL} end tag then any {@linkplain CharacterReference#isWhiteSpace(char) white space} before the closing angle bracket is removed.
+	 *  <li>otherwise the original {@linkplain Segment#toString() source text} of the entire tag is returned.
+	 * </ul>
 	 *
 	 * @return an XML representation of this end tag.
+	 * @see StartTag#tidy()
 	 */
 	public String tidy() {
-		return toString();
+		final String string=toString();
+		if (endTagType!=EndTagType.NORMAL) return string;
+		if (!CharacterReference.isWhiteSpace(string.charAt(string.length()-2))) return string;
+		int i=string.length()-3;
+		while (i>0 && CharacterReference.isWhiteSpace(string.charAt(i))) i--;
+		return string.substring(0,i+1)+'>';
 	}
 
 	/**

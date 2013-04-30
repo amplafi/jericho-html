@@ -23,6 +23,8 @@ package net.htmlparser.jericho;
 import java.util.*;
 
 final class HTMLElementNameSet extends HashSet<String> {
+	private static final long serialVersionUID=1L;
+
 	public HTMLElementNameSet() {
 		super(1);
 	}
