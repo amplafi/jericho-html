@@ -68,6 +68,7 @@ public final class MicrosoftTagTypes {
 	 * </dl>
 	 * @deprecated  Use {@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_IF} and {@link MicrosoftConditionalCommentTagTypes#DOWNLEVEL_REVEALED_ENDIF} instead.
 	 */
+	@Deprecated
 	public static final StartTagType DOWNLEVEL_REVEALED_CONDITIONAL_COMMENT=StartTagTypeMicrosoftDownlevelRevealedConditionalComment.INSTANCE;
 
 	private static final TagType[] TAG_TYPES={
