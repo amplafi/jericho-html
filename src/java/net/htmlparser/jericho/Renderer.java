@@ -22,6 +22,8 @@ package net.htmlparser.jericho;
 
 import java.util.*;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Performs a simple rendering of HTML markup into text.
@@ -55,7 +57,8 @@ import java.io.*;
  */
 public class Renderer implements CharStreamSource {
 	private final Segment rootSegment;
-	private int maxLineLength=76;
+	private int maxLineLength=DEFAULT_LINE_LENGTH;
+	private int hrLineLength=DEFAULT_LINE_LENGTH-4;
 	private String newLine="\r\n";
 	private boolean includeHyperlinkURLs=true;
 	private boolean includeAlternateText=true;
@@ -67,6 +70,7 @@ public class Renderer implements CharStreamSource {
 	private boolean includeFirstElementTopMargin=false;
 	private String tableCellSeparator=" \t";
 
+	private static final int DEFAULT_LINE_LENGTH=76;
 	private static final int UNORDERED_LIST=-1;
 
 	private static Map<String,ElementHandler> ELEMENT_HANDLERS=new HashMap<String,ElementHandler>();
@@ -137,7 +141,7 @@ public class Renderer implements CharStreamSource {
 
 	// Documentation inherited from CharStreamSource
 	public void appendTo(final Appendable appendable) throws IOException {
-		new Processor(this,rootSegment,getMaxLineLength(),getNewLine(),getIncludeHyperlinkURLs(),getIncludeAlternateText(),getDecorateFontStyles(),getConvertNonBreakingSpaces(),getBlockIndentSize(),getListIndentSize(),getListBullets(),getTableCellSeparator()).appendTo(appendable);
+		new Processor(this,rootSegment,getMaxLineLength(),getHRLineLength(),getNewLine(),getIncludeHyperlinkURLs(),getIncludeAlternateText(),getDecorateFontStyles(),getConvertNonBreakingSpaces(),getBlockIndentSize(),getListIndentSize(),getListBullets(),getTableCellSeparator()).appendTo(appendable);
 	}
 	
 	// Documentation inherited from CharStreamSource
@@ -155,6 +159,10 @@ public class Renderer implements CharStreamSource {
 	 * <p>
 	 * Lines that would otherwise exceed this length are wrapped onto a new line at a word boundary.
 	 * <p>
+	 * Setting this property automatically sets the {@link #setHRLineLength(int) HRLineLength} property to <code>MaxLineLength - 4</code>.
+	 * <p>
+	 * Setting this property to zero disables line wrapping completely, and leaves the value of {@link #setHRLineLength(int) HRLineLength} unchanged.
+	 * <p>
 	 * A Line may still exceed this length if it consists of a single word, where the length of the word plus the line indent exceeds the maximum length.
 	 * In this case the line is wrapped immediately after the end of the word.
 	 * <p>
@@ -167,6 +175,7 @@ public class Renderer implements CharStreamSource {
 	 */
 	public Renderer setMaxLineLength(final int maxLineLength) {
 		this.maxLineLength=maxLineLength;
+		if (maxLineLength>0) hrLineLength=Math.max(2,maxLineLength-4);
 		return this;
 	}
 
@@ -175,10 +184,38 @@ public class Renderer implements CharStreamSource {
 	 * <p>
 	 * See the {@link #setMaxLineLength(int)} method for a full description of this property.
 	 *
-	 * @return the column at which lines are to be wrapped.
+	 * @return the column at which lines are to be wrapped, or zero if line wrapping is disabled.
 	 */	
 	public int getMaxLineLength() {
 		return maxLineLength;
+	}
+
+	/**
+	 * Sets the length of a horizontal line.
+	 * <p>
+	 * The length determines the number of hyphen characters used to render {@link HTMLElementName#HR HR} elements.
+	 * <p>
+	 * This property is set automatically to <code>MaxLineLength - 4</code> when the {@link #setMaxLineLength(int) MaxLineLength} property is set.
+	 * The default value is <code>72</code>.
+	 *
+	 * @param hrLineLength  the length of a horizontal line.
+	 * @return this <code>Renderer</code> instance, allowing multiple property setting methods to be chained in a single statement. 
+	 * @see #getHRLineLength()
+	 */
+	public Renderer setHRLineLength(final int hrLineLength) {
+		this.hrLineLength=hrLineLength;
+		return this;
+	}
+
+	/**
+	 * Returns the length of a horizontal line.
+	 * <p>
+	 * See the {@link #setHRLineLength(int)} method for a full description of this property.
+	 *
+	 * @return the length of a horizontal line.
+	 */	
+	public int getHRLineLength() {
+		return hrLineLength;
 	}
 
 	/**
@@ -263,7 +300,7 @@ public class Renderer implements CharStreamSource {
 	 * A return value of <code>null</code> indicates that the hyperlink URL should not be rendered at all.
 	 * <p>
 	 * The default implementation of this method returns <code>null</code> if the <code>href</code> attribute of the specified start tag
-	 * is '<code>#</code>', starts with "<code>javascript:</code>", or is missing.
+	 * starts with "<code>javascript:</code>", is a relative or invalid URI, or is missing completely.
 	 * In all other cases it returns the value of the <code>href</code> attribute enclosed in angle brackets.
 	 * <p>
 	 * See the documentation of the {@link #setIncludeHyperlinkURLs(boolean)} method for an example of how a hyperlink is rendered by the default implementation.
@@ -281,7 +318,13 @@ public class Renderer implements CharStreamSource {
 	 *    Renderer renderer=new Renderer(segment) {<br />
 	 *    &nbsp; &nbsp; public String renderHyperlinkURL(StartTag startTag) {<br />
 	 *    &nbsp; &nbsp; &nbsp; &nbsp; String href=startTag.getAttributeValue("href");<br />
-	 *    &nbsp; &nbsp; &nbsp; &nbsp; if (href==null || href.equals("#") || href.startsWith("javascript:")) return null;<br />
+	 *    &nbsp; &nbsp; &nbsp; &nbsp; if (href==null || href.startsWith("javascript:")) return null;<br />
+	 *    &nbsp; &nbsp; &nbsp; &nbsp; try {<br />
+	 *    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; URI uri=new URI(href);<br />
+	 *    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (!uri.isAbsolute()) return null;<br />
+	 *    &nbsp; &nbsp; &nbsp; &nbsp; } catch (URISyntaxException ex) {<br />
+	 *    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return null;<br />
+	 *    &nbsp; &nbsp; &nbsp; &nbsp; }<br />
 	 *    &nbsp; &nbsp; &nbsp; &nbsp; return href;<br />
 	 *    &nbsp; &nbsp; }<br />
 	 *    };<br />
@@ -294,7 +337,13 @@ public class Renderer implements CharStreamSource {
 	 */
 	public String renderHyperlinkURL(final StartTag startTag) {
 		final String href=startTag.getAttributeValue("href");
-		if (href==null || href.equals("#") || href.startsWith("javascript:")) return null;
+		if (href==null || href.startsWith("javascript:")) return null;
+		try {
+			URI uri=new URI(href);
+			if (!uri.isAbsolute()) return null;
+		} catch (URISyntaxException ex) {
+			return null;
+		}
 		return '<'+href+'>';
 	}
 
@@ -369,7 +418,7 @@ public class Renderer implements CharStreamSource {
 	 *    &nbsp; &nbsp; &nbsp; &nbsp; if (startTag.getName()==HTMLElementName.AREA) return null;
 	 *    &nbsp; &nbsp; &nbsp; &nbsp; String alt=startTag.getAttributeValue("alt");<br />
 	 *    &nbsp; &nbsp; &nbsp; &nbsp; if (alt==null || alt.length()==0) return null;<br />
-	 *    &nbsp; &nbsp; &nbsp; &nbsp; return ''+alt+'';<br />
+	 *    &nbsp; &nbsp; &nbsp; &nbsp; return '«'+alt+'»';<br />
 	 *    &nbsp; &nbsp; }<br />
 	 *    };<br />
 	 *    String renderedSegment=renderer.toString();
@@ -775,6 +824,7 @@ public class Renderer implements CharStreamSource {
 		private final Segment rootSegment;
 		private final Source source;
 		private final int maxLineLength;
+		private final int hrLineLength;
 		private final String newLine;
 		private final boolean includeHyperlinkURLs;
 		private final boolean includeAlternateText;
@@ -801,11 +851,12 @@ public class Renderer implements CharStreamSource {
 	
 		private static final int NO_MARGIN=-1;
 	
-		public Processor(final Renderer renderer, final Segment rootSegment, final int maxLineLength, final String newLine, final boolean includeHyperlinkURLs, final boolean includeAlternateText, final boolean decorateFontStyles, final boolean convertNonBreakingSpaces, final int blockIndentSize, final int listIndentSize, final char[] listBullets, final String tableCellSeparator) {
+		public Processor(final Renderer renderer, final Segment rootSegment, final int maxLineLength, final int hrLineLength, final String newLine, final boolean includeHyperlinkURLs, final boolean includeAlternateText, final boolean decorateFontStyles, final boolean convertNonBreakingSpaces, final int blockIndentSize, final int listIndentSize, final char[] listBullets, final String tableCellSeparator) {
 			this.renderer=renderer;
 			this.rootSegment=rootSegment;
 			source=rootSegment.source;
 			this.maxLineLength=maxLineLength;
+			this.hrLineLength=hrLineLength;
 			this.newLine=newLine;
 			this.includeHyperlinkURLs=includeHyperlinkURLs;
 			this.includeAlternateText=includeAlternateText;
@@ -820,7 +871,8 @@ public class Renderer implements CharStreamSource {
 		public void appendTo(final Appendable appendable) throws IOException {
 			reset();
 			this.appendable=appendable;
-			appendSegmentProcessingChildElements(rootSegment.begin,rootSegment.end,rootSegment.getChildElements());
+			List<Element> elements=rootSegment instanceof Element ? Collections.singletonList((Element)rootSegment) : rootSegment.getChildElements();
+			appendSegmentProcessingChildElements(rootSegment.begin,rootSegment.end,elements);
 		}
 	
 		private void reset() {
@@ -942,7 +994,7 @@ public class Renderer implements CharStreamSource {
 					if (i+6<text.length() && text.startsWith("From ",i+1)) continue;
 					break; // OK to wrap here if necessary
 				}
-				if (col+i-textIndex+1>=maxLineLength) {
+				if (maxLineLength>0 && col+i-textIndex+1>=maxLineLength) {
 					if (lastCharWhiteSpace && (listIndentLevel|indentSize)==0) append(' ');
 					startNewLine(0);
 				} else if (lastCharWhiteSpace) {
@@ -1082,7 +1134,10 @@ public class Renderer implements CharStreamSource {
 		}
 		public void process(Processor x, Element element) throws IOException {
 			if (x.decorateFontStyles) {
-				if (x.lastCharWhiteSpace) {
+				if (x.isBlockBoundary()) {
+					x.appendBlockVerticalMargin();
+				} else if (x.lastCharWhiteSpace) {
+					// output white space only if not on a block boundary
 					x.append(' ');
 					x.lastCharWhiteSpace=false;
 				}
@@ -1154,19 +1209,36 @@ public class Renderer implements CharStreamSource {
 	private static final class A_ElementHandler implements ElementHandler {
 		public static final ElementHandler INSTANCE=new A_ElementHandler();
 		public void process(Processor x, Element element) throws IOException {
-			x.appendElementContent(element);
-			if (!x.includeHyperlinkURLs) return;
+			if (!x.includeHyperlinkURLs) {
+				x.appendElementContent(element);
+				return;
+			}
 			String renderedHyperlinkURL=x.renderer.renderHyperlinkURL(element.getStartTag());
-			if (renderedHyperlinkURL==null) return;
-			int linkLength=renderedHyperlinkURL.length()+1;
-			if (x.col+linkLength>=x.maxLineLength) {
+			if (renderedHyperlinkURL==null) {
+				x.appendElementContent(element);
+				return;
+			}
+			String href=element.getAttributeValue("href");
+			final boolean displayContent=href==null || !getInformalURL(href).equals(getInformalURL(element.getContent().toString())); // only display the content if it is not the same as the URL
+			int linkLength=renderedHyperlinkURL.length();
+			if (displayContent) {
+				x.appendElementContent(element);
+				linkLength++; // allow for space after content
+			}
+			if (x.maxLineLength>0 && x.col+linkLength>=x.maxLineLength) {
 				x.startNewLine(0);
-			} else {
+			} else if (displayContent) {
 				x.append(' ');
 			}
 			x.append(renderedHyperlinkURL);
 			x.lastCharWhiteSpace=true;
 		}
+	}
+
+	private static final String getInformalURL(String url) {
+		if (url.startsWith("http://")) url=url.substring(7);
+		if (url.endsWith("/")) url=url.substring(0,url.length()-1);
+		return url;
 	}
 	
 	private static final class BR_ElementHandler implements ElementHandler {
@@ -1188,10 +1260,9 @@ public class Renderer implements CharStreamSource {
 		}
 		protected void processBlockContent(Processor x, Element element) throws IOException {
 			x.appendBlockVerticalMargin();
-			final int maxCol=x.maxLineLength-4;
 			x.append('-');
-			for (int i=x.col; i<maxCol; i++) x.appendable.append('-');
-			x.col=maxCol;
+			for (int i=x.col; i<x.hrLineLength; i++) x.appendable.append('-');
+			x.col=x.hrLineLength;
 		}
 		protected AbstractBlockElementHandler newInstance(int topMargin, int bottomMargin, boolean indent) {
 			return new HR_ElementHandler(topMargin,bottomMargin,indent);
