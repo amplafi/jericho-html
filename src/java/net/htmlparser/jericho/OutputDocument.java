@@ -81,6 +81,7 @@ import java.util.*;
 public final class OutputDocument implements CharStreamSource {
 	private CharSequence sourceText;
 	private ArrayList<OutputSegment> outputSegments=new ArrayList<OutputSegment>();
+	private final Segment segment;
 
 	/**
 	 * Constructs a new output document based on the specified source document.
@@ -88,6 +89,7 @@ public final class OutputDocument implements CharStreamSource {
 	 */
 	public OutputDocument(final Source source) {
 	  if (source==null) throw new IllegalArgumentException("source argument must not be null");
+		this.segment=source;
 		this.sourceText=source;
 	}
 
@@ -97,14 +99,27 @@ public final class OutputDocument implements CharStreamSource {
 	 */
 	public OutputDocument(final Segment segment) {
 	  if (segment==null) throw new IllegalArgumentException("segment argument must not be null");
+	  this.segment=segment;
 	  Source source=segment.source;
 		this.sourceText=source;
-		if (segment.begin>0) remove(new Segment(source,0,segment.begin));
-		if (segment.end<source.end) remove(new Segment(source,segment.end,source.end));
+		if (segment.begin>0) remove(0,segment.begin);
+		if (segment.end<source.end) remove(segment.end,source.end);
 	}
 
 	OutputDocument(final ParseText parseText) {
 		this.sourceText=parseText;
+		this.segment=null; // segment is not used internally and this constructor is only used internally so users will never encounter segment==null.
+	}
+
+	/**
+	 * Returns the original segment upon which this output document is based.
+	 * <p>
+	 * If a {@link Source} was used to construct the output document, this returns the {@link Source} object.
+	 *
+	 * @return the original segment upon which this output document is based.
+	 */
+	public Segment getSegment() {
+		return segment;
 	}
 
 	/**
@@ -116,6 +131,18 @@ public final class OutputDocument implements CharStreamSource {
 	 */
 	public CharSequence getSourceText() {
 		return sourceText;
+	}
+
+	/**
+	 * Removes the specified segment of this output document.
+	 * <p>
+	 * This is equivalent to {@link #replace(int,int,CharSequence) replace}<code>(begin,end,null)</code>.
+	 *
+	 * @param begin  the character position at which to begin the removal.
+	 * @param end  the character position at which to end the removal.
+	 */
+	public void remove(final int begin, final int end) {
+		register(new RemoveOutputSegment(begin,end));
 	}
 
 	/**
