@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 final class URIAttributes {
-	private static final String[] uriAttributeNames=new String[] {"action","background","cite","href","longdesc","src","usemap"};
+	private static final String[] uriAttributeNames=new String[] {"action","archive","background","cite","href","longdesc","src","usemap"};
+
 	private static final String[] objectURIAttributeNames=new String[] {"classid","codebase","data"};
 	
 	public static List<Attribute> getList(final Segment segment) {
@@ -62,6 +63,10 @@ final class URIAttributes {
 		for (StartTag startTag : segment.getAllStartTags("style",null)) {
 			addURLSegmentsFromCSS(uriSegments,startTag.getAttributes().get("style").getValueSegment());
 		}
+		for (Element element : segment.getAllElements(HTMLElementName.STYLE)) {
+			addURLSegmentsFromCSS(uriSegments,element.getContent());
+		}
+		Collections.sort(uriSegments);
 		return uriSegments;
 	}
 
