@@ -16,3 +16,4 @@ output.txt
 /docs/javadoc
 /docs/javadoc-jar
 pom.xml.versionsBackup
+.DS_Store
