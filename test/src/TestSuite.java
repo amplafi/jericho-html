@@ -5,9 +5,9 @@ import net.htmlparser.jericho.*;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	TagTest.class,
+//	TagTest.class,
 	SegmentTest.class,
-	ScriptTest.class,
+//	ScriptTest.class,
 	NodeIteratorTest.class,
 	StreamedTextTest.class,
 	StreamedParseTextTest.class,
