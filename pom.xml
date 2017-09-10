@@ -21,7 +21,7 @@
         <github-base>git@github.com:amplafi/</github-base>
         <java-build>1.6</java-build>
         <log4j-build>1.2.17</log4j-build>
-        <slf4j-build>1.7.5</slf4j-build>   
+        <slf4j-build>1.7.13</slf4j-build>   
         <commons-logging-build>1.1.3</commons-logging-build>        
         <wagon-build>1.0-beta-7</wagon-build>        
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
