@@ -169,7 +169,7 @@
     <repositories>
         <repository>
             <id>amplafi.public</id>
-            <url>http://maven.amplafi.com/</url>
+            <url>https://maven.amplafi.com/</url>
             <releases>
                 <checksumPolicy>warn</checksumPolicy>
             </releases>
@@ -181,7 +181,7 @@
     <distributionManagement>
         <repository>
             <id>amplafi.public</id>
-            <url>ftp://maven.amplafi.com/</url>
+            <url>ftps://maven.amplafi.com/</url>
         </repository>
     </distributionManagement>    
 </project>
